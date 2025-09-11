@@ -1,8 +1,6 @@
 
 # AV‑SAFE Toolkit
 
-**Tabs:** [README](README.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Contributing](CONTRIBUTING.md) · [Governance](GOVERNANCE.md) · [Acceptable Use](ACCEPTABLE_USE.md) · [Privacy](PRIVACY.md) · [Threat Model](THREAT_MODEL.md) · [Citation](CITATION.cff) · [Changelog](CHANGELOG.md)
-
 Privacy‑preserving **minute summaries** for audio & light, **rules engine** (WHO/IEEE‑aware), **hash‑chain + optional Ed25519** integrity, **SQLite‑backed FastAPI** receiver, **HTML reports**, and a **HF‑AVC corpus** (taxonomy & threat model).
 
 ---
