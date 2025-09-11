@@ -78,8 +78,8 @@ This project accepts historico-forensic cases as JSON files that validate agains
 <br>
 
 ## Privacy & security checklist (before you push)
-✅ No raw audio/video/images anywhere in the repo or examples.
-✅ No private keys or credentials (the simulator prints test keys—do not commit them).
+✅ No raw audio/video/images anywhere in the repo or examples \
+✅ No private keys or credentials (the simulator prints test keys—do not commit them) \
 ✅ If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
 
 <br>
