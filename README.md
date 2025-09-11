@@ -86,6 +86,7 @@ From medieval “bell” punishments to modern “no-touch” programs, archives
 * Encoding historical-forensic record into measurable descriptors and a machine-readable decision rubric
 * Converting ambient signals into WHO noise / IEEE-1789 flicker–aligned metrics and tamper-evident reports—without recording or storing intelligible content
 \
+\
 The corpus, rules, and privacy-preserving sensor workflow translate history and testimony into actionable reports and engineering language for auditors, architects, ombuds, and rights monitors--enabling practical prevention and accountability that respects ethics and privacy.
 
 
