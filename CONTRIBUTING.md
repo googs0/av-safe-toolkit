@@ -6,7 +6,7 @@ Thanks for your interest in improving AV‑SAFE! This project advances **privacy
 - Be kind. Follow our [Code of Conduct](CODE_OF_CONDUCT.md).
 - No harmful stimuli or exposure protocols.
 - Privacy by design. No raw audio/video; descriptors only.
-- Respect [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+- Respect [Acceptable Use](ACCEPTABLE_USE.md).
 
 ## How to contribute
 1. Open an Issue to discuss significant changes.
