@@ -32,8 +32,7 @@ pip install -r requirements-dev.txt
 pre-commit install
 pytest -q
 ```
-
-\
+<br>
 
 # Adding an HF-AVC case
 This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
