@@ -1,4 +1,5 @@
-# AV-SAFE (Descriptors + Rules + Integrity + Reports) + HF‑AVC Corpus (WP1)
+# AV-SAFE-TOOLKIT 
+(Descriptors + Rules + Integrity + Reports) + HF‑AVC Corpus (WP1)
 
 Privacy-preserving **minute summaries** for audio & light, **rules engine** (WHO/IEEE-aware), **hash-chain + Ed25519** integrity, **SQLite-backed FastAPI** server, **HTML reports**, and **HF‑AVC corpus (taxonomy & threat model)**.
 
