@@ -1,5 +1,0 @@
-pytest
-ruff
-black
-pre-commit
-sqlite3-bro
