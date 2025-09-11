@@ -1,17 +1,14 @@
 cff-version: 1.2.0
 title: AV-SAFE Toolkit — privacy-preserving audiovisual metrology & HF-AVC corpus
-version: 0.6.0
-date-released: 2025-09-11
+version: 0.9.1
+date-released: 2025-10-09
 authors:
-  - family-names: YourLastName
-    given-names: YourFirstName
-    orcid: https://orcid.org/0000-0000-0000-0000
-repository-code: https://github.com/<YOURUSER>/av-safe-toolkit
+  - name: Michael G / AV-SAFE contributors 
+repository-code: https://github.com/googs0/av-safe-toolkit
 license: MIT
 preferred-citation:
   type: software
   title: AV-SAFE Toolkit
   authors:
-    - family-names: YourLastName
-      given-names: YourFirstName
+    - name: AV-SAFE Toolkit Contributors
   year: 2025
