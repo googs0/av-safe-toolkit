@@ -68,7 +68,7 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM cases;'
 - 🟩 **Open releases** — ☐  
 
 
-![Lint](https://github.com/YOURUSER/avsafe-descriptors/actions/workflows/lint.yml/badge.svg)
+![Lint](https://github.com/<YOURUSER>/av-safe-toolkit/actions/workflows/lint.yml/badge.svg)
 
 ## License
 Released under the **MIT License** (see [LICENSE](LICENSE)).
