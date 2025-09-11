@@ -71,12 +71,13 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 [FastAPI+SQLite] → rules (WHO/IEEE) → flags → HTML report
 ```
 
-## Ethics & Governance (pointers)
+## Ethics & Governance (quick overview)
 
-- **Privacy by design:** descriptors only, no raw audio/video; per‑minute hash chaining; optional signatures. See [PRIVACY.md](PRIVACY.md).
-- **Threat model:** assets/adversaries/mitigations. See [THREAT_MODEL.md](THREAT_MODEL.md).
+- **Privacy by design:** descriptors only, no raw audio/video; per‑minute hash chaining; optional signatures. See [Privacy](PRIVACY.md).
+- **Threat model:** assets/adversaries/mitigations. See [Threat Model](THREAT_MODEL.md).
 - **Acceptable Use:** anti‑surveillance licensing intent; deployment guidance. See [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
-- **Community:** [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [GOVERNANCE.md](GOVERNANCE.md), [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Community:** [Code of Conduct](CODE_OF_CONDUCT.md), [Governance](GOVERNANCE.md), [Contributing](CONTRIBUTING.md).
+- **Use cases:** architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward.
 
 ## License
-Released under the **MIT License** (see [LICENSE](LICENSE)).
+Released under the **MIT License** (see [License](LICENSE)).
