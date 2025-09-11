@@ -85,8 +85,8 @@ This project accepts historico-forensic cases as JSON files that validate agains
 
 <br>
 
-## Where to ask questions
-[av-safe-info@proton.me](av-safe-info@proton.me)
+
+**Questions / Concerns:** [av-safe-info@proton.me](av-safe-info@proton.me)
 
 <br>
 
