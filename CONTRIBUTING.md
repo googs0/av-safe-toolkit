@@ -88,4 +88,4 @@ This project accepts historico-forensic cases as JSON files that validate agains
 
 **Questions / Concerns:** [av-safe-info@proton.me](av-safe-info@proton.me)
 
-** **By contributing, you agree your contributions are MIT-licensed (see [License](LICENSE.md))** **
+**By contributing, you agree your contributions are MIT-licensed (see [License](LICENSE.md))** 
