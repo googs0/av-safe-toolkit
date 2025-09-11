@@ -1,4 +1,4 @@
 # Security Policy
 
-Report vulnerabilities (integrity, signature verification, server endpoints) to **ADD SECURITY CONTACT**. Acknowledge within 5 business days.
+Report vulnerabilities (integrity, signature verification, server endpoints) to **av-safe-info@proton.me**.
 Do not include raw audio/video or PII in reports.
