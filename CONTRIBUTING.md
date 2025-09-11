@@ -13,12 +13,12 @@ Thanks for your interest in improving AV‑SAFE! This project advances **privacy
 
 ## How to contribute
 1. Open an Issue to discuss significant changes
-2. Fork; create a branch:
+2. Fork and branch
    ```bash
    git checkout -b feat/short-name  # or fix/..., docs/..., rules/..., corpus/...
    ```
-3. Add tests. 
-4. Style.
+3. Add tests
+4. Style:
    ```bash
    pre-commit install
    pre-commit run -a      # format/lint before you push (optional if you dislike auto-lint)
