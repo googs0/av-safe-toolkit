@@ -48,7 +48,7 @@ uvicorn avsafe_descriptors.server.app:app --reload --port 8000
 # GET  /session/{session_id}/report?public_key_hex=<hex>
 ```
 
-## WP1 — HF‑AVC corpus (taxonomy & threat model)
+## HF‑AVC corpus (taxonomy & threat model)
 
 Define and ingest **historico‑forensic cases** into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON‑LD context for interop.
 
