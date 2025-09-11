@@ -9,6 +9,8 @@ Thanks for your interest in improving AV‑SAFE! This project advances **privacy
 - **Respect**. Anti-surveillance and anti-discipline [Acceptable Use](ACCEPTABLE_USE.md)
 - **Security & disclosure:** Do not post private keys; see [Security](SECURITY.md) and [Disclaimer](DISCLAIMER.md)
 
+<br>
+
 ## How to contribute
 1. Open an Issue to discuss significant changes
 2. Fork; create a branch:
@@ -34,7 +36,7 @@ pytest -q
 ```
 <br>
 
-# Adding an HF-AVC case
+## Adding an HF-AVC case
 This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
 \
 1. Copy template
@@ -58,23 +60,31 @@ This project accepts historico-forensic cases as JSON files that validate agains
 - Note any legal/ethical tags
 - Confirm **no raw recordings** were added
 
-# Changing rules/thresholds
+<br>
+
+## Changing rules/thresholds
 - WHO noise limits by locale: add new keys under noise.` laeq_limits_db ` (e.g., `Stockholm: 55`).
 - IEEE-1789 mapping: adjust ` flicker.percent_mod_vs_freq.segments ` (piecewise ` a + b/f `).
 - Provide a short rationale in the PR and, if possible, cite a primary source
 
-# Tests & quality
+<br>
+
+## Tests & quality
 - Use ` pytest `; aim for meaningful coverage of new logic.
 - Prefer deterministic tests (fixed seeds, stable thresholds).
 - For rules changes, add a tiny JSONL fixture to demonstrate the flag/threshold behavior.
 - **No real-world recordings** in tests or fixtures—only synthetic, safe descriptors
 
-#Privacy & security checklist (before you push)
+<br>
+
+## Privacy & security checklist (before you push)
 ✅ No raw audio/video/images anywhere in the repo or examples.
 ✅ No private keys or credentials (the simulator prints test keys—do not commit them).
 ✅ If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
 
-# Where to ask questions
+<br>
+
+## Where to ask questions
 [av-safe-info@proton.me](av-safe-info@proton.me)
 
 By contributing, you agree your contributions are MIT-licensed (see [License](LICENSE.md))
