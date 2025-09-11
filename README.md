@@ -1,19 +1,20 @@
 
 # AV‑SAFE Toolkit
 
-Privacy‑preserving **minute summaries** for audio & light, **rules engine** (WHO/IEEE‑aware), **hash‑chain + optional Ed25519** integrity, **SQLite‑backed FastAPI** receiver, **HTML reports**, and a **HF‑AVC corpus** (taxonomy & threat model).
+Privacy‑preserving **minute summaries** for audio & light, **rules engine**, **hash‑chain + optional Ed25519** integrity, **SQLite‑backed FastAPI** receiver, **HTML reports**, and a **HF‑AVC corpus**.
 
 ---
 AV-SAFE is a privacy-by-design framework for measuring and documenting audiovisual environments without recording intelligible content.
 
-* Descriptors, not recordings: LAeq, LCpeak, A-weighted 1/3-octaves; flicker frequency, percent modulation, flicker index.
+* **Descriptors, not recordings:** LAeq, LCpeak, A-weighted 1/3-octaves; flicker frequency, percent modulation, flicker index.
 
-* Standards aligned: thresholds/rules reflecting WHO Environmental Noise and IEEE-1789 practice (piecewise curves).
+* **Standards aligned:** thresholds/rules reflecting WHO Environmental Noise and IEEE-1789 practice (piecewise curves).
 
-* Evidence you can trust: per-minute hash chaining and optional Ed25519 signatures; SQLite-backed FastAPI receiver; HTML audit reports.
+* **Evidence you can trust:** per-minute hash chaining and optional Ed25519 signatures; SQLite-backed FastAPI receiver; HTML audit reports.
 
-* Research-grade corpus: a JSON-LD HF-AVC module (taxonomy + threat model) for historico-forensic cases mapped to engineering descriptors and UNCAT/ECHR/Istanbul categories.
-Use cases: architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward.
+* **Research-grade corpus:** a JSON-LD HF-AVC module (taxonomy + threat model) for historico-forensic cases mapped to engineering descriptors and UNCAT/ECHR/Istanbul categories.
+
+* **Use cases:** architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward.
 
 
 ## Quickstart
