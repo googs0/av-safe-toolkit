@@ -83,11 +83,9 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 ## Why this matters?
 
 From medieval “bell” punishments to modern “no-touch” programs, archives and testimony show how sound and light (loudness, frequency, repetition, flicker) have been weaponized in detention, siege, and other coercive settings. Harmful audiovisual patterns can erode sleep, cognition, and well-being, yet most spaces lack objective, privacy-respecting ways to detect and document them. **AV-SAFE toolkit** closes that gap by:
+The corpus, rules, and privacy-preserving sensor workflow translate history and testimony into actionable reports and engineering language for auditors, architects, ombuds, and rights monitors--enabling practical prevention and accountability that respects ethics and privacy.
 * Encoding historical-forensic record into measurable descriptors and a machine-readable decision rubric
 * Converting ambient signals into WHO noise / IEEE-1789 flicker–aligned metrics and tamper-evident reports—without recording or storing intelligible content
-\
-\
-The corpus, rules, and privacy-preserving sensor workflow translate history and testimony into actionable reports and engineering language for auditors, architects, ombuds, and rights monitors--enabling practical prevention and accountability that respects ethics and privacy.
 
 
 ## License
