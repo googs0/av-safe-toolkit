@@ -73,11 +73,12 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 
 ## Ethics & Governance (quick overview)
 
-- **Privacy by design:** descriptors only, no raw audio/video; per‑minute hash chaining; optional signatures. See [Privacy](PRIVACY.md).
-- **Threat model:** assets/adversaries/mitigations. See [Threat Model](THREAT_MODEL.md).
-- **Acceptable Use:** anti‑surveillance licensing intent; deployment guidance. See [Acceptable Use](ACCEPTABLE_USE.md).
-- **Community:** [Code of Conduct](CODE_OF_CONDUCT.md), [Governance](GOVERNANCE.md), [Contributing](CONTRIBUTING.md).
-- **Use cases:** architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward.
+- **Privacy by design:** descriptors only, no raw audio/video; per‑minute hash chaining; optional signatures. See [Privacy](PRIVACY.md)
+- **Threat model:** assets/adversaries/mitigations. See [Threat Model](THREAT_MODEL.md)
+- **Acceptable Use:** anti‑surveillance licensing intent; deployment guidance. See [Acceptable Use](ACCEPTABLE_USE.md)
+- **Community:** [Code of Conduct](CODE_OF_CONDUCT.md), [Governance](GOVERNANCE.md), [Contributing](CONTRIBUTING.md)
+- **Use cases:** architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward
+- **Disclaimer:** [Disclaimer](DISCLAIMER.md)
 
 
 ## Why this matters?
