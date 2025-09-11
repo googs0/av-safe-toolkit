@@ -12,19 +12,19 @@ Thanks for your interest in improving AV‑SAFE! This project advances **privacy
 <br>
 
 ## How to contribute
-1. Open an Issue to discuss significant changes
-2. Fork and branch
+**1. Open an Issue to discuss significant changes**
+**2. Fork and branch**
    ```bash
    git checkout -b feat/short-name  # or fix/..., docs/..., rules/..., corpus/...
    ```
-3. Add tests
-4. Style:
+**3. Add tests**
+**4. Style:**
    ```bash
    pre-commit install
    pre-commit run -a      # format/lint before you push (optional if you dislike auto-lint)
    ```
-7. Conventional commits: `feat: ...`, `fix: ...`, `docs: ...`, `rules: ...`, `corpus: ...`, `ci: ...`
-8. Open a PR and fill the checklist
+**7. Conventional commits:** `feat: ...`, `fix: ...`, `docs: ...`, `rules: ...`, `corpus: ...`, `ci: ...`
+**8. Open a PR and fill the checklist**
    
 <br>
 
@@ -40,23 +40,23 @@ pytest -q
 
 ## Adding an HF-AVC case
 This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
-1. Copy template
+**1. Copy template**
    ```bash
    cp avsafe_descriptors/hf_avc/data/cases/CASE_TEMPLATE.json \
    avsafe_descriptors/hf_avc/data/cases/<your_case_id>.json
    ```
-2. Fill fields carefully
+**2. Fill fields carefully**
 - Keep descriptors neutral; include provenance and year
 - Map narrative intensity to descriptor buckets (e.g laeq_bucket_db: '65-80')
 - Add sources (URLs, publisher) that others can audit
 
-3. Validate against schema: ` avsafe_descriptors/hf_avc/schemas/case.schema.json `
-4. Ingest locally
+**3. Validate against schema:** ` avsafe_descriptors/hf_avc/schemas/case.schema.json `
+**4. Ingest locally**
    ```bash
    hf-avc-ingest --cases avsafe_descriptors/hf_avc/data/cases/<your_case_id>.json
    sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 5;'
    ```
-5. Open a PR with new case file
+**5. Open a PR with new case file**
 - Justify descriptor buckets & uncertainties
 - Note any legal/ethical tags
 - Confirm **no raw recordings** were added
@@ -79,9 +79,9 @@ This project accepts historico-forensic cases as JSON files that validate agains
 <br>
 
 ## Privacy & security checklist (before you push)
-✅ No raw audio/video/images anywhere in the repo or examples \
-✅ No private keys or credentials (the simulator prints test keys—do not commit them) \
-✅ If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
+  ⃝ No raw audio/video/images anywhere in the repo or examples \
+  ⃝  No private keys or credentials (the simulator prints test keys—do not commit them) \
+  ⃝  If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
 
 <br>
 
