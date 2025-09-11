@@ -90,4 +90,4 @@ This project accepts historico-forensic cases as JSON files that validate agains
 
 <br>
 
-**By contributing, you agree your contributions are MIT-licensed (see [License](LICENSE.md))**
+** **By contributing, you agree your contributions are MIT-licensed (see [License](LICENSE.md))** **
