@@ -6,7 +6,7 @@ You may **not** use this project to surveil, target, or discipline individuals; 
 This policy sets the ethical and operational boundaries for using the AV-SAFE toolkit, reference hardware, and HF-AVC corpus (“the Project”). It complements (but does not replace) the software license. By using the Project, you agree to abide by this policy in addition to the LICENSE and the Code of Conduct.
 
 ### 1) Prohibited uses 
-You may not use the Project to: \
+You may not use the Project to: 
 - Surveil, target, or discipline individuals (e.g., workplace monitoring, tenant/student discipline, algorithmic management).
 - Support detention, interrogation, intelligence, or law-enforcement operations, including in carceral, military, or policing contexts.
 - Coerce or harm (e.g., induce sleep loss, distress, or sensory overload; recreate harmful exposures).
