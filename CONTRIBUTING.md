@@ -40,7 +40,6 @@ pytest -q
 
 ## Adding an HF-AVC case
 This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
-\
 1. Copy template
    ```bash
    cp avsafe_descriptors/hf_avc/data/cases/CASE_TEMPLATE.json \
