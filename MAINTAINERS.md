@@ -1,6 +1,8 @@
 # MAINTAINERS
 
-| Michael G | googs0 | av-safe-info@proton.me |
+Michael G \
+[@googs0](https://github.com/googs0) \
+[av-safe-info@proton.me](av-safe-info@proton.me)
 
 ## Responsibilities
 - Review PRs, ensure tests/CI pass, enforce Acceptable Use & privacy-by-design.
