@@ -33,6 +33,8 @@ pre-commit install
 pytest -q
 ```
 
+\
+
 # Adding an HF-AVC case
 This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
 \
@@ -72,3 +74,8 @@ This project accepts historico-forensic cases as JSON files that validate agains
 ✅ No raw audio/video/images anywhere in the repo or examples.
 ✅ No private keys or credentials (the simulator prints test keys—do not commit them).
 ✅ If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
+
+# Where to ask questions
+[av-safe-info@proton.me](av-safe-info@proton.me)
+
+By contributing, you agree your contributions are MIT-licensed (see [License](LICENSE.md))
