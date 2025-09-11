@@ -8,7 +8,7 @@ AV-SAFE is a privacy-by-design framework for measuring and documenting audiovisu
 
 * **Descriptors, not recordings:** LAeq, LCpeak, A-weighted 1/3-octaves; flicker frequency, percent modulation, flicker index.
 
-* **Standards aligned:** thresholds/rules reflecting WHO Environmental Noise and IEEE-1789 practice (piecewise curves).
+* **Standards aligned:** thresholds/rules reflecting **WHO Environmental Noise and IEEE-1789 practice** (piecewise curves).
 
 * **Evidence you can trust:** per-minute hash chaining and optional Ed25519 signatures; SQLite-backed FastAPI receiver; HTML audit reports.
 
