@@ -1,6 +1,6 @@
 # Acceptable Use (Anti‑Surveillance)
 
-You may **not** use this project to surveil, target, or discipline individuals; to conduct coercion; or to store raw audio/video. Deploy with signage and opt‑out where applicable. \
+You may **not** use this project to surveil, target, or discipline individuals; to conduct coercion; or to store raw audio/video. Deploy with signage and opt‑out where applicable.
 
 ### Purpose & scope: 
 This policy sets the ethical and operational boundaries for using the AV-SAFE toolkit, reference hardware, and HF-AVC corpus (“the Project”). It complements (but does not replace) the software license. By using the Project, you agree to abide by this policy in addition to the LICENSE and the Code of Conduct.
