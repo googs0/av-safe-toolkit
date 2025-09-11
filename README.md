@@ -14,8 +14,6 @@ AV-SAFE is a privacy-by-design framework for measuring and documenting audiovisu
 
 * **Research-grade corpus:** a JSON-LD HF-AVC module (taxonomy + threat model) for historico-forensic cases mapped to engineering descriptors and UNCAT/ECHR/Istanbul categories.
 
-* **Use cases:** architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward.
-
 
 ## Quickstart
 
