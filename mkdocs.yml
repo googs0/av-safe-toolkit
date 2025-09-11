@@ -7,4 +7,4 @@ nav:
   - Quickstart: quickstart.md
   - API: api.md
   - Corpus (HF-AVC): corpus.md
-repo_url: https://github.com/<YOURUSER>/av-safe-toolkit
+repo_url: https://github.com/googs0/av-safe-toolkit
