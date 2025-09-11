@@ -1,0 +1,22 @@
+rules:
+  - id: noise.night.la_eq.exceedance
+    type: noise.laeq.exceedance
+    hour_range: [22, 7]
+    threshold_db: 45
+    min_fraction: 0.10
+    severity: AMBER
+    message: "Night-time LAeq exceeded guideline for a significant portion of time"
+
+  - id: noise.day.la_eq.exceedance
+    type: noise.laeq.exceedance
+    hour_range: [7, 22]
+    threshold_db: 55
+    min_fraction: 0.10
+    severity: AMBER
+    message: "Daytime LAeq exceeded guideline for a significant portion of time"
+
+  - id: noise.peak.safety
+    type: noise.lcpeak.max
+    threshold_db: 120
+    severity: RED
+    message: "LCpeak exceeded safety-related peak threshold"

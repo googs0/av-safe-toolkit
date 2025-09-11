@@ -1,0 +1,10 @@
+rules:
+  - id: light.flicker.zone.simple
+    type: light.flicker.zone
+    f_cut_hz: 200
+    amber_pm_percent: 20
+    amber_min_fraction: 0.10
+    red_pm_percent: 50
+    red_min_fraction: 0.05
+    severity: AMBER
+    message: "Observed low-frequency flicker with elevated modulation"

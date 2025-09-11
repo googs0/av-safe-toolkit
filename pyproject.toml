@@ -1,0 +1,25 @@
+[project]
+name = "avsafe_descriptors"
+version = "0.6.0"
+description = "AV-SAFE: privacy-preserving audio+light descriptors, WHO/IEEE rules, integrity (hash/sign), SQLite server, and reports; includes HF-AVC corpus (WP1)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "pydantic>=2.0",
+  "PyYAML>=6.0",
+  "matplotlib>=3.7",
+  "fastapi>=0.110",
+  "uvicorn>=0.23",
+  "PyNaCl>=1.5"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project.scripts]
+avsafe-sim = "avsafe_descriptors.tools.sim_cli:main"
+avsafe-rules-run = "avsafe_descriptors.tools.rules_cli:main"
+avsafe-report = "avsafe_descriptors.tools.report_cli:main"
+hf-avc-ingest = "avsafe_descriptors.hf_avc.tools.ingest_cli:main"

@@ -1,0 +1,29 @@
+{
+  "@context": {
+    "id": "@id",
+    "type": "@type",
+    "Case": "https://purl.org/avsafe/Case",
+    "SourceDoc": "https://purl.org/avsafe/SourceDoc",
+    "title": "http://purl.org/dc/terms/title",
+    "country": "http://schema.org/addressCountry",
+    "period": "http://purl.org/dc/terms/temporal",
+    "modalities": "https://purl.org/avsafe/modalities",
+    "description": "http://purl.org/dc/terms/description",
+    "reported_effects": "https://purl.org/avsafe/reportedEffects",
+    "descriptors": "https://purl.org/avsafe/descriptors",
+    "legal_ethics": "https://purl.org/avsafe/legalEthics",
+    "sources": "http://purl.org/dc/terms/source",
+    "laeq_bucket_db": "https://purl.org/avsafe/laeqBucket",
+    "spectral_notes": "https://purl.org/avsafe/spectralNotes",
+    "tlm_freq_hz": "https://purl.org/avsafe/tlmFreqHz",
+    "tlm_mod_percent": "https://purl.org/avsafe/tlmModPercent",
+    "uncat": "https://purl.org/avsafe/UNCAT",
+    "echr_article_3": "https://purl.org/avsafe/ECHR3",
+    "istanbul_protocol_refs": "https://purl.org/avsafe/IPrefs",
+    "cases_cited": "https://purl.org/avsafe/casesCited",
+    "url": "http://schema.org/url",
+    "publisher": "http://purl.org/dc/terms/publisher",
+    "doc_type": "http://purl.org/dc/terms/type",
+    "provenance": "http://www.w3.org/ns/prov#wasDerivedFrom"
+  }
+}
