@@ -25,6 +25,8 @@ Thanks for your interest in improving AV‑SAFE! This project advances **privacy
    ```
 7. Conventional commits: `feat: ...`, `fix: ...`, `docs: ...`, `rules: ...`, `corpus: ...`, `ci: ...`
 8. Open a PR and fill the checklist
+   
+<br>
 
 ## Dev setup
 ```bash
