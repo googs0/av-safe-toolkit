@@ -1,0 +1,28 @@
+{
+  "@context": {
+    "@vocab": "https://example.org/avsafe/hf_avc#",
+    "id": "@id",
+    "title": "schema:name",
+    "country": "schema:addressCountry",
+    "period": "schema:temporalCoverage",
+    "modalities": "avs:modalities",
+    "description": "schema:description",
+    "reported_effects": "avs:reportedEffects",
+    "descriptors": "avs:descriptors",
+    "legal_ethics": "avs:legalEthics",
+    "sources": "schema:citation",
+    "laeq_bucket_db": "avs:laeqBucket",
+    "spectral_notes": "avs:spectralNotes",
+    "tlm_freq_hz": "avs:tlmFrequencyHz",
+    "tlm_mod_percent": "avs:tlmPercentModulation",
+    "notes": "schema:note",
+    "uncat": "avs:uncat",
+    "echr_article_3": "avs:echrArticle3",
+    "istanbul_protocol_refs": "avs:istanbulRefs",
+    "cases_cited": "avs:casesCited",
+    "url": "schema:url",
+    "publisher": "schema:publisher",
+    "doc_type": "schema:additionalType",
+    "provenance": "prov:wasDerivedFrom"
+  }
+}

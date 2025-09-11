@@ -1,0 +1,9 @@
+services:
+  avsafe:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - AVSAFE_DB=/app/avsafe.db

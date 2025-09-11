@@ -1,0 +1,74 @@
+
+# AV‑SAFE Toolkit
+
+**Tabs:** [README](README.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Contributing](CONTRIBUTING.md) · [Governance](GOVERNANCE.md) · [Acceptable Use](ACCEPTABLE_USE.md) · [Privacy](PRIVACY.md) · [Threat Model](THREAT_MODEL.md) · [Citation](CITATION.cff) · [Changelog](CHANGELOG.md)
+
+Privacy‑preserving **minute summaries** for audio & light, **rules engine** (WHO/IEEE‑aware), **hash‑chain + optional Ed25519** integrity, **SQLite‑backed FastAPI** receiver, **HTML reports**, and a **HF‑AVC corpus** (taxonomy & threat model).
+
+---
+
+## Quickstart
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+pip install -r requirements-dev.txt
+
+# 1) Simulate minutes for ~6h (prints keys if --sign)
+avsafe-sim --minutes 360 --outfile minutes.jsonl --sign
+
+# 2) Evaluate rules with a WHO/IEEE profile and locale thresholds
+avsafe-rules-run \
+  --minutes minutes.jsonl \
+  --profile avsafe_descriptors/rules/profiles/who_ieee_profile.yaml \
+  --locale munich \
+  --out results.json
+
+# 3) Generate HTML report
+avsafe-report --minutes minutes.jsonl --results results.json --out report.html
+```
+
+## Server
+
+```bash
+uvicorn avsafe_descriptors.server.app:app --reload --port 8000
+# POST /session -> {session_id}
+# POST /session/{session_id}/ingest_jsonl  (file=@minutes.jsonl)
+# POST /session/{session_id}/evaluate      (body: {"rules_yaml":"<yaml>", "locale":"munich"})
+# GET  /session/{session_id}/report?public_key_hex=<hex>
+```
+
+## WP1 — HF‑AVC corpus (taxonomy & threat model)
+
+Define and ingest **historico‑forensic cases** into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON‑LD context for interop.
+
+```bash
+# Validate + ingest sample cases into hf_avc_corpus.db
+hf-avc-ingest --cases avsafe_descriptors/hf_avc/data/cases/*.json
+
+# Inspect (SQLite)
+sqlite3 hf_avc_corpus.db '.tables'
+sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
+```
+
+- JSON Schema: `avsafe_descriptors/hf_avc/schemas/case.schema.json`  
+- JSON‑LD context: `avsafe_descriptors/hf_avc/schemas/context.jsonld`  
+- Pydantic models: `avsafe_descriptors/hf_avc/models.py`
+
+## Architecture
+
+```
+[Edge/Sim] → minute JSONL (LAeq, 1/3‑oct, TLM)
+    ↓  hash‑chain + (optional) Ed25519
+[FastAPI+SQLite] → rules (WHO/IEEE) → flags → HTML report
+```
+
+## Ethics & Governance (pointers)
+
+- **Privacy by design:** descriptors only, no raw audio/video; per‑minute hash chaining; optional signatures. See [PRIVACY.md](PRIVACY.md).
+- **Threat model:** assets/adversaries/mitigations. See [THREAT_MODEL.md](THREAT_MODEL.md).
+- **Acceptable Use:** anti‑surveillance licensing intent; deployment guidance. See [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+- **Community:** [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), [GOVERNANCE.md](GOVERNANCE.md), [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+Released under the **MIT License** (see [LICENSE](LICENSE)).
