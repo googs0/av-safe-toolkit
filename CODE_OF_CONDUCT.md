@@ -2,6 +2,5 @@
 
 We pledge to make participation a harassment‑free experience for everyone.  
 Contact: **av-safe-info@protonmail.me**.\
-* [Contributor Convenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct)/
-\
+* [Contributor Convenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct)
 * [Acceptable Use](ACCEPTABLE_USE.md)
