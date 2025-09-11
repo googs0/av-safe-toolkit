@@ -1,11 +1,8 @@
 # MAINTAINERS
 
-List the people responsible for triage, review, and releases.
-
-| Name | GitHub | Role | Contact |
+| Name | GitHub | Contact |
 |------|--------|------|---------|
-| Your Name | @your-github | Lead maintainer | you@example.com |
-| Co‑Maintainer | @co-maintainer | Maintainer | co@example.com |
+| Michael G | @googs0 | av-safe-info@proton.me |
 
 ## Responsibilities
 - Review PRs, ensure tests/CI pass, enforce Acceptable Use & privacy-by-design.
