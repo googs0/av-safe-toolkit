@@ -1,5 +1,5 @@
 # Changelog
-All notable changes to this project will be documented here. Follows Keep a Changelog.
+All notable changes to this project will be documented here.
 
 ## [0.6.0] - 2025-09-11
 ### Added
