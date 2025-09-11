@@ -1,7 +1,5 @@
 # MAINTAINERS
 
-| Name | GitHub | Contact |
-|------|--------|------|---------|
 | Michael G | @googs0 | av-safe-info@proton.me |
 
 ## Responsibilities
