@@ -74,7 +74,8 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 ## Integrity & Signing
 AV-SAFE signs records to support tamper-evident reports.
 
-- `AVSAFE_PRIV_HEX` — Optional **Ed25519 seed** (64 hex chars = 32 bytes).  
+  ### Env-Var
+  - `AVSAFE_PRIV_HEX` — Optional **Ed25519 seed** (64 hex chars = 32 bytes).  
   Use this locally if you want **stable signatures across runs**.
   ```bash
   # Example placeholder - replace locally
