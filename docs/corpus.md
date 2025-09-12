@@ -5,20 +5,6 @@ It powers the historico-forensic side of AV-SAFE and interoperates with the sens
 
 ---
 
-## Layout
-**av-safe-toolkit/**
-└─ **avsafe_descriptors/**
-└─ **hf_avc/**
-├─ cases/ # JSON case records (one file per case)
-│ ├─ case_template_v1.json # Start here for new cases
-│ └─ example_waco_v1.json # Example record (v1 schema)
-├─ **schemas/**
-│ ├─ case_schema_v1.json # Strict JSON Schema for validation
-│ └─ context.jsonld # JSON-LD context for semantic tags
-├─ ingest_cli.py # CLI: ingest JSON → SQLite
-├─ query_cli.py # CLI: list/filter/export from SQLite
-└─ models.py # Pydantic models (Case/Source/etc.)
-
 ```bash
 - **Schema version:** `1.0.0`  
 - **JSON-LD context:** `hf_avc/schemas/context.jsonld`
