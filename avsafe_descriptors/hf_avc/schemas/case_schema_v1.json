@@ -1,0 +1,358 @@
+{
+  "$id": "https://av-safe.org/schema/hf-avc-case/1-0-0.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HF-AVC Case",
+  "description": "Historico-Forensic AV Coercion Case record (machine-readable).",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "jurisdiction",
+    "period",
+    "modalities",
+    "summary",
+    "reported_effects",
+    "descriptors",
+    "sources",
+    "provenance"
+  ],
+
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^1\\.0\\.0$" },
+    "@context": { "type": "string", "format": "uri" },
+    "@type": { "type": "string" },
+
+    "id": { "type": "string", "minLength": 3 },
+    "title": { "type": "string", "minLength": 3 },
+
+    "jurisdiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country_iso2"],
+      "properties": {
+        "country_iso2": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "place": { "type": "string" },
+        "coordinates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "lat": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
+            "lon": { "type": ["number", "null"], "minimum": -180, "maximum": 180 }
+          }
+        }
+      }
+    },
+
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "$ref": "#/$defs/dateLoose" },
+        "end":   { "$ref": "#/$defs/dateLoose" }
+      }
+    },
+
+    "coercion_context": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 2 },
+      "uniqueItems": true
+    },
+
+    "modalities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["audio", "light"] }
+    },
+
+    "summary": { "type": "string", "minLength": 10 },
+
+    "exposure_pattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "continuity": { "type": "string", "enum": ["continuous", "intermittent", "unknown"] },
+        "duty_cycle_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "time_of_day": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["day", "evening", "night"] },
+          "uniqueItems": true
+        },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "reported_effects": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 2 },
+      "uniqueItems": true
+    },
+
+    "descriptors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audio", "light"],
+      "properties": {
+        "audio": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "laeq_db": { "$ref": "#/$defs/numOrRange" },
+            "lcpeak_db": { "$ref": "#/$defs/numOrRange" },
+            "third_octave_db": {
+              "type": "object",
+              "additionalProperties": false,
+              "patternProperties": {
+                "^(10|12\\.5|16|20|25|31\\.5|40|50|63|80|100|125|160|200|250|315|400|500|630|800|1000|1250|1600|2000|2500|3150|4000|5000|6300|8000|10000|12500|16000|20000|31500|40000)$": {
+                  "type": "number"
+                }
+              }
+            },
+            "modulation": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "repetition_index": { "type": ["number", "null"] },
+                "roughness_index": { "type": ["number", "null"] },
+                "notes": { "type": "string" }
+              }
+            }
+          }
+        },
+        "light": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tlm_freq_hz": { "$ref": "#/$defs/numOrRange" },
+            "tlm_mod_percent": { "$ref": "#/$defs/percentOrRange" },
+            "flicker_index": { "$ref": "#/$defs/zeroToOneOrRange" }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "standards_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "who_noise_2018": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "night_guideline_db": { "type": "number" },
+            "likely_exceeded": { "type": "boolean" },
+            "basis": { "type": "string" }
+          }
+        },
+        "ieee_1789_2015": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "zone": { "type": "string", "enum": ["no_observed_effect", "low_risk", "unknown", "not_applicable"] },
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "legal_ethics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uncat": { "type": "string" },
+        "echr_article_3": { "type": "string" },
+        "istanbul_protocol_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "cases_cited": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "year", "publisher", "doc_type", "provenance"],
+        "properties": {
+          "id": { "type": "string", "minLength": 2 },
+          "title": { "type": "string", "minLength": 2 },
+          "year": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "url": { "type": "string", "format": "uri" },
+          "publisher": { "type": "string" },
+          "doc_type": { "type": "string", "enum": ["report", "news", "book", "paper", "testimony", "legal", "other"] },
+          "provenance": { "type": "string", "enum": ["archive", "journal", "press", "court", "ngo", "gov", "other"] },
+          "pages": { "type": ["string", "null"] },
+          "quote": { "type": ["string", "null"], "maxLength": 300 },
+          "accessed": { "$ref": "#/$defs/dateLoose" },
+          "reliability": { "type": "string", "enum": ["low", "medium", "high"] }
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coded_by", "coding_date", "review_status"],
+      "properties": {
+        "coded_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 2 },
+          "uniqueItems": true
+        },
+        "double_coded_by": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 2 },
+          "uniqueItems": true
+        },
+        "adjudicator": { "type": "string" },
+        "coding_date": { "$ref": "#/$defs/dateLoose" },
+        "review_status": { "type": "string", "enum": ["draft", "internal_reviewed", "external_pending", "external_reviewed"] },
+        "interrater_kappa": { "type": "number", "minimum": 0, "maximum": 1 },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sensitivity": { "type": "string", "enum": ["low", "medium", "high"] },
+        "redactions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "related_cases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "media": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" },
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "dateLoose": {
+      "type": "string",
+      "pattern": "^\\d{4}(-\\d{2}){0,2}$",
+      "description": "YYYY or YYYY-MM or YYYY-MM-DD"
+    },
+    "numOrRange": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": {
+            "value": { "type": "number" },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["range"],
+          "properties": {
+            "range": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" }
+              }
+            },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      ]
+    },
+    "percentOrRange": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": {
+            "value": { "type": "number", "minimum": 0, "maximum": 100 },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["range"],
+          "properties": {
+            "range": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number", "minimum": 0, "maximum": 100 },
+                "max": { "type": "number", "minimum": 0, "maximum": 100 }
+              }
+            },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      ]
+    },
+    "zeroToOneOrRange": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value"],
+          "properties": {
+            "value": { "type": "number", "minimum": 0, "maximum": 1 },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["range"],
+          "properties": {
+            "range": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number", "minimum": 0, "maximum": 1 },
+                "max": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      ]
+    }
+  }
+}
