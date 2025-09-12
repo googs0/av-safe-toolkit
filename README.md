@@ -71,6 +71,15 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 [FastAPI+SQLite] → rules (WHO/IEEE) → flags → HTML report
 ```
 
+## Integrity & Signing
+AV-SAFE signs records to support tamper-evident reports.
+
+- `AVSAFE_PRIV_HEX` — Optional **Ed25519 seed** (64 hex chars = 32 bytes).  
+  Use this locally if you want **stable signatures across runs**.
+  ```bash
+  # Example placeholder - replace locally
+  export AVSAFE_PRIV_HEX="0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210"
+
 ## Ethics & Governance (quick overview)
 
 - **Ethics & privacy by design:** descriptors only, no raw audio/video; per‑minute hash chaining; optional signatures. See [Privacy](PRIVACY.md)
