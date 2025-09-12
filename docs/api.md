@@ -79,14 +79,14 @@ Content-Type: multipart/form-data; boundary=----BOUNDARY
 Authorization: Bearer <token>     # optional
 Idempotency-Key: 4c07c4f7-5f5e-4bb5-8f8c-0b6d9c0f2b5a
 
-------BOUNDARY
+# ------BOUNDARY
 Content-Disposition: form-data; name="file"; filename="minutes.jsonl"
 Content-Type: application/octet-stream
 
 {...record 0...}\n
 {...record 1...}\n
 ...
-------BOUNDARY--
+# ------BOUNDARY--
 ~~~
 
 **Response 202**
