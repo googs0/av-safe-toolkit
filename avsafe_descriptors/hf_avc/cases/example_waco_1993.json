@@ -1,0 +1,70 @@
+{
+  "$schema": "../schemas/case_schema_v1.json",
+  "schema_version": "1.0.0",
+  "id": "case:waco_1993",
+  "title": "Waco siege loudspeaker operations",
+
+  "jurisdiction": {
+    "country_iso2": "US",
+    "place": "Waco, Texas"
+  },
+
+  "period": {
+    "start": "1993-02",
+    "end": "1993-04"
+  },
+
+  "coercion_context": ["siege", "law-enforcement"],
+  "modalities": ["audio"],
+
+  "summary": "Neutral summary of reported loudspeaker broadcasts during night hours; sources describe music and announcements at levels likely to disturb sleep without reproducing precise content.",
+
+  "reported_effects": ["sleep disruption", "distress"],
+
+  "descriptors": {
+    "audio": {
+      "laeq_db": { "range": { "min": 55, "max": 70 }, "confidence": 0.6 },
+      "third_octave_db": {
+        "125": 60.0,
+        "250": 58.5,
+        "500": 57.0,
+        "1000": 56.0
+      },
+      "modulation": {
+        "repetition_index": null,
+        "roughness_index": null,
+        "notes": "Loops and musical content reported; exact metrics uncertain."
+      }
+    },
+    "light": {}
+  },
+
+  "standards_mapping": {
+    "who_noise_2018": {
+      "night_guideline_db": 40,
+      "likely_exceeded": true,
+      "basis": "Night broadcasts + LAeq proxy range"
+    }
+  },
+
+  "sources": [
+    {
+      "id": "src:press_example",
+      "title": "Contemporary reporting (placeholder)",
+      "year": 1993,
+      "url": "https://example.org/article",
+      "publisher": "Press",
+      "doc_type": "news",
+      "provenance": "press",
+      "accessed": "2025-09-12",
+      "reliability": "medium"
+    }
+  ],
+
+  "provenance": {
+    "coded_by": ["user:mg"],
+    "coding_date": "2025-09-12",
+    "review_status": "draft",
+    "notes": "Initial conversion from legacy template; conservative LAeq proxies."
+  }
+}
