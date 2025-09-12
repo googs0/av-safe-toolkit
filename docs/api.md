@@ -99,7 +99,7 @@ boundry
   "checks": {
     "schema": "ok",
     "chain_hash": "ok",
-    "signatures": "ok"   # "ok" | "missing" | "invalid"
+    "signatures": "ok" 
   }
 }
 ~~~
