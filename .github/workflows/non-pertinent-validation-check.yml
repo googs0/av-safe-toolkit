@@ -16,20 +16,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Use a committed .gitleaks.toml at repo root, or keep this step to generate one.
+      # If you already committed a .gitleaks.toml at repo root, this step does nothing.
       - name: Ensure .gitleaks.toml (allowlist doc placeholders only)
+        shell: bash
         run: |
           if [ ! -f .gitleaks.toml ]; then
-            cat > .gitleaks.toml <<'EOF'
-            title = "AV-SAFE — allowlist for doc placeholders (API.md only)"
-            [allowlist]
-            description = "Ignore placeholder Authorization/Idempotency-Key lines in API docs; scan everything else."
-            paths = [ '''(?i)^docs/api\.md$''' ]
-            regexes = [
-              '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
-              '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
-            ]
-            EOF
+          cat > .gitleaks.toml <<'EOF'
+          title = "AV-SAFE — allowlist for doc placeholders (API.md only)"
+
+          [allowlist]
+          description = "Ignore placeholder Authorization/Idempotency-Key lines in documentation; scan everything else."
+          # Only applies to docs/api.md so we don't mask real leaks elsewhere.
+          paths = [ '''(?i)^docs/api\.md$''' ]
+          regexes = [
+            '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
+            '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
+          ]
+          EOF
           fi
 
       - name: Scan repository (Gitleaks)
@@ -44,10 +47,16 @@ jobs:
             --redact
 
       - name: Show outputs for debugging
+        if: always()
         run: |
+          echo "Workspace listing:"
           ls -la
           echo "----"
-          [ -f gitleaks.sarif ] && echo "Found gitleaks.sarif" || echo "Missing gitleaks.sarif"
+          if [ -f gitleaks.sarif ]; then
+            echo "Found gitleaks.sarif"
+          else
+            echo "Missing gitleaks.sarif"
+          fi
 
       - name: Upload SARIF to GitHub Security
         if: always() && hashFiles('gitleaks.sarif') != ''
