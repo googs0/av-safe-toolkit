@@ -10,7 +10,7 @@ def test_sign_uses_real_crypto(monkeypatch):
     monkeypatch.setenv("AVSAFE_STRICT_CRYPTO", "1")
 
     # Import after env var is set
-    from integrity.signing import sign_bytes
+    from avsafe_descriptors.integrity.signing import sign_bytes
 
     try:
         sig = sign_bytes(b"test")
