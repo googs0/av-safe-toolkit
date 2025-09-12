@@ -3,13 +3,13 @@ name: Validate HF-AVC cases
 on:
   pull_request:
     paths:
-      - "hf_avc/data/cases/**.json"
-      - "schemas/**.json"
+      - "hf_avc/cases/**.json"
+      - "hf_avc/schemas/**.json"
       - "cli/validate_cases.py"
   push:
     paths:
-      - "hf_avc/data/cases/**.json"
-      - "schemas/**.json"
+      - "hf_avc/cases/**.json"
+      - "hf_avc/schemas/**.json"
       - "cli/validate_cases.py"
 
 jobs:
