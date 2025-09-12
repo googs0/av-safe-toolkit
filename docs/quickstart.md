@@ -119,5 +119,5 @@ To fail if unavailable, set `AVSAFE_STRICT_CRYPTO=1`.
 - Configure CI (lint, tests, schema checks).
 - Add real WHO/IEEE regional profiles (see avsafe_descriptors/rules/profiles/).
 - Draft a new HF-AVC case from the template and open a PR.
-  
+
 You now have a local, end-to-end AV-SAFE workflow: simulate → evaluate → report, without recording intelligible content.
