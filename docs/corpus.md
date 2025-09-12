@@ -205,7 +205,3 @@ hf-avc-query --db hf_avc_corpus.db export-csv corpus.csv
 
 Need a new query **(e.g., by effect, by modality, CSV slice)**?
 Open an issue and we’ll extend `hf-avc-query`.
-
-```makefile
-::contentReference[oaicite:0]{index=0}
-```
