@@ -1,0 +1,7 @@
+repos:
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets            # must remain this id
+        name: detect-non-pertinent    # your friendly label
+        args: ["--baseline", ".non-pertinent.baseline"]
