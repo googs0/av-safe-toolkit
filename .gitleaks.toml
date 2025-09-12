@@ -1,0 +1,8 @@
+title = "AV-SAFE — allowlist for doc placeholders"
+
+[allowlist]
+description = "Ignore known placeholder headers in documentation while scanning everything else."
+regexes = [
+  '''Authorization:\s*Bearer\s*<token>''',
+  '''Idempotency-Key:\s*<uuid-v4>'''
+]
