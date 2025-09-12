@@ -30,6 +30,8 @@ avsafe-sim = "avsafe_descriptors.cli.sim:main"
 avsafe-rules-run = "avsafe_descriptors.cli.rules_run:main"
 avsafe-report = "avsafe_descriptors.cli.report:main"
 hf-avc-ingest = "avsafe_descriptors.hf_avc.ingest_cli:main"
+hf-avc-query = "hf_avc.query_cli:main"
+
 
 [tool.setuptools.packages.find]
 where = ["."]
