@@ -1,39 +1,130 @@
 {
-  "id": "case:unique_id",
+  "schema_version": "1.0.0",
+  "@context": "https://example.org/hf-avc/context.jsonld",
+  "@type": "HFAVC:Case",
+
+  "id": "case:unique_slug",
   "title": "Short descriptive title",
-  "country": "COUNTRY",
-  "period": "YYYY\u2013YYYY",
-  "modalities": [
-    "audio",
-    "light"
-  ],
-  "description": "Neutral, sourced summary (no sensational detail).",
+
+  "jurisdiction": {
+    "country_iso2": "US",
+    "place": "Waco, Texas",
+    "coordinates": { "lat": null, "lon": null }
+  },
+
+  "period": {
+    "start": "1993-02",
+    "end": "1993-04"
+  },
+
+  "coercion_context": ["siege", "law-enforcement"],
+  "modalities": ["audio", "light"],
+
+  "summary": "Neutral, sourced summary (no sensational detail).",
+
+  "exposure_pattern": {
+    "continuity": "intermittent",
+    "duty_cycle_percent": 50,
+    "time_of_day": ["night"],
+    "notes": "Broadcast loops at night hours; daytime quieter."
+  },
+
   "reported_effects": [
     "sleep disruption",
-    "distress"
+    "distress",
+    "impaired concentration"
   ],
+
   "descriptors": {
-    "laeq_bucket_db": "55\u201370",
-    "spectral_notes": "125\u2013500 Hz emphasis",
-    "tlm_freq_hz": "100\u2013120",
-    "tlm_mod_percent": "10\u201340",
-    "notes": "Uncertainty bands, triangulated from sources."
+    "audio": {
+      "laeq_db": { "range": { "min": 55, "max": 70 }, "confidence": 0.6 },
+      "lcpeak_db": { "value": 95, "confidence": 0.4 },
+      "third_octave_db": {
+        "125": 60.0,
+        "250": 58.5,
+        "500": 57.0,
+        "1000": 56.0,
+        "2000": 55.5
+      },
+      "modulation": {
+        "repetition_index": null,
+        "roughness_index": null,
+        "notes": "Loops; musical content reported; exact metrics uncertain."
+      }
+    },
+    "light": {
+      "tlm_freq_hz": { "range": { "min": 100, "max": 120 }, "confidence": 0.7 },
+      "tlm_mod_percent": { "range": { "min": 10, "max": 40 }, "confidence": 0.6 },
+      "flicker_index": { "range": { "min": 0.05, "max": 0.20 }, "confidence": 0.5 }
+    },
+    "notes": "Uncertainty bands triangulated from sources; all proxies within WHO/IEEE safe modeling bounds."
   },
+
+  "standards_mapping": {
+    "who_noise_2018": {
+      "night_guideline_db": 40,
+      "likely_exceeded": true,
+      "basis": "exposure_pattern + laeq range"
+    },
+    "ieee_1789_2015": {
+      "zone": "unknown",
+      "notes": "TLM frequency in 100–120 Hz band; modulation depth uncertain."
+    }
+  },
+
   "legal_ethics": {
-    "uncat": "torture/ill-treatment (context dependent)",
+    "uncat": "ill-treatment (context-dependent)",
     "echr_article_3": "potential relevance",
-    "istanbul_protocol_refs": [],
-    "cases_cited": []
+    "istanbul_protocol_refs": ["2022: Ch.5"],
+    "cases_cited": ["hudoc:ireland_v_uk"]
   },
+
   "sources": [
     {
-      "id": "src:short_id",
-      "title": "Title",
-      "year": 2000,
+      "id": "src:news_1993_latimes",
+      "title": "Coverage of loudspeaker operations",
+      "year": 1993,
       "url": "https://example.org",
-      "publisher": "Org",
+      "publisher": "Los Angeles Times",
+      "doc_type": "news",
+      "provenance": "press",
+      "pages": null,
+      "quote": null,
+      "accessed": "2025-09-12",
+      "reliability": "medium"
+    },
+    {
+      "id": "src:hrw_2013",
+      "title": "Report title",
+      "year": 2013,
+      "url": "https://example.org/report.pdf",
+      "publisher": "Human Rights Watch",
       "doc_type": "report",
-      "provenance": "archive/journal"
+      "provenance": "archive",
+      "pages": "12-14",
+      "quote": "Short, neutral excerpt (≤300 chars)",
+      "accessed": "2025-09-12",
+      "reliability": "high"
     }
-  ]
+  ],
+
+  "provenance": {
+    "coded_by": ["user:initials1"],
+    "double_coded_by": ["user:initials2"],
+    "adjudicator": "user:senior",
+    "coding_date": "2025-09-10",
+    "review_status": "external_pending",
+    "interrater_kappa": 0.78,
+    "notes": "Intensity mapping adjudicated; light descriptors conservative."
+  },
+
+  "privacy": {
+    "sensitivity": "medium",
+    "redactions": []
+  },
+
+  "links": {
+    "related_cases": [],
+    "media": []
+  }
 }
