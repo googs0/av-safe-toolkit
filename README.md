@@ -79,6 +79,17 @@ AV-SAFE signs records to support tamper-evident reports.
   ```bash
   # Example placeholder - replace locally
   export AVSAFE_PRIV_HEX="0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210"
+  ```
+
+  ### Security hygiene (secrets)
+  - CI scans for secrets via Gitleaks on every push/PR.
+  - Local pre-commit uses `detect-secrets` with a baseline.
+  - If a secret leaks: rotate at the provider, then run `tools/purge_secret.sh "<pattern>" main` and force-push.
+
+**Integrity & Signing env vars**
+- `AVSAFE_PRIV_HEX` — optional Ed25519 seed (64 hex). For stable local signatures.
+- `AVSAFE_STRICT_CRYPTO=1` — require real crypto in CI/prod (no demo fallback).
+
 
 ## Ethics & Governance (quick overview)
 
