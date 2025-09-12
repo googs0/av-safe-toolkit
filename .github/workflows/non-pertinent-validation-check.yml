@@ -16,28 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # If you already committed a .gitleaks.toml at repo root, this step does nothing.
+      # If you've already committed .gitleaks.toml at repo root, this step does nothing.
       - name: Ensure .gitleaks.toml (allowlist doc placeholders only)
         shell: bash
         run: |
           if [ ! -f .gitleaks.toml ]; then
-          cat > .gitleaks.toml <<'EOF'
-          title = "AV-SAFE — allowlist for doc placeholders (API.md only)"
+            cat > .gitleaks.toml <<'EOF'
+            title = "AV-SAFE — allowlist for doc placeholders (API.md only)"
 
-          [allowlist]
-          description = "Ignore placeholder Authorization/Idempotency-Key lines in documentation; scan everything else."
-          # Only applies to docs/api.md so we don't mask real leaks elsewhere.
-          paths = [ '''(?i)^docs/api\.md$''' ]
-          regexes = [
-            '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
-            '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
-          ]
-          EOF
+            [allowlist]
+            description = "Ignore placeholder Authorization/Idempotency-Key lines in documentation; scan everything else."
+            # Only applies to docs/api.md so we don't mask real leaks elsewhere.
+            paths = [ '''(?i)^docs/api\.md$''' ]
+            regexes = [
+              '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
+              '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
+            ]
+            EOF
           fi
 
       - name: Scan repository (Gitleaks)
         uses: gitleaks/gitleaks-action@v2
         with:
+          # Write SARIF to the repo root so the next step can find it.
           args: >
             --no-banner
             --config=.gitleaks.toml
@@ -46,17 +47,16 @@ jobs:
             --report-path ./gitleaks.sarif
             --redact
 
-      - name: Show outputs for debugging
+      # Belt & suspenders: if some versions of gitleaks skip writing a report when 0 findings,
+      # create a minimal empty SARIF so the upload step has a file to consume.
+      - name: Ensure SARIF exists (create empty if missing)
         if: always()
+        shell: bash
         run: |
-          echo "Workspace listing:"
-          ls -la
-          echo "----"
-          if [ -f gitleaks.sarif ]; then
-            echo "Found gitleaks.sarif"
-          else
-            echo "Missing gitleaks.sarif"
+          if [ ! -f ./gitleaks.sarif ]; then
+            printf '{"version":"2.1.0","runs":[]}\n' > ./gitleaks.sarif
           fi
+          ls -la ./gitleaks.sarif
 
       - name: Upload SARIF to GitHub Security
         if: always() && hashFiles('gitleaks.sarif') != ''
