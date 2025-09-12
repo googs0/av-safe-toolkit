@@ -1,0 +1,50 @@
+name: Non-pertinent validation check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  non-pertinent-scan:
+    name: Scan for non-pertinent material (secrets)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --redact --report-format sarif --report-path gitleaks.sarif
+
+      - name: Upload SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: gitleaks.sarif
+
+  crypto-check:
+    name: Enforce real crypto (no demo fallback)
+    runs-on: ubuntu-latest
+    env:
+      AVSAFE_STRICT_CRYPTO: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+          pip install pynacl || pip install cryptography
+          pip install pytest
+      - name: Run crypto test
+        run: pytest -q tests/test_signing_crypto.py
