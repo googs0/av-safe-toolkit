@@ -76,17 +76,18 @@ Upload newline-delimited JSON records (one minute per line).
 POST /session/5e2a8f7c-.../ingest_jsonl HTTP/1.1
 Host: 127.0.0.1:8000
 Content-Type: multipart/form-data; boundary=----BOUNDARY
-Authorization: Bearer <token>     # optional
+Authorization: Bearer <token>
 Idempotency-Key: 4c07c4f7-5f5e-4bb5-8f8c-0b6d9c0f2b5a
 
-# ------BOUNDARY
+------BOUNDARY
 Content-Disposition: form-data; name="file"; filename="minutes.jsonl"
 Content-Type: application/octet-stream
 
-{...record 0...}\n
-{...record 1...}\n
+{...record 0...}
+{...record 1...}
 ...
-# ------BOUNDARY--
+------BOUNDARY--
+
 ~~~
 
 **Response 202**
