@@ -16,19 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Allowlist ONLY known doc placeholders so real leaks still fail the job.
-      - name: Write minimal Gitleaks allowlist for docs
-        run: |
-          cat > .gitleaks.toml <<'EOF'
-          title = "AV-SAFE allowlist: doc placeholders only"
-          [allowlist]
-          description = "Ignore placeholder auth headers in documentation."
-          regexes = [
-            '''Authorization:\s*Bearer\s*<token>''',
-            '''Idempotency-Key:\s*<uuid-v4>'''
-          ]
-          EOF
-
+      # Use committed .gitleaks.toml at repo root
       - name: Scan repository
         uses: gitleaks/gitleaks-action@v2
         with:
