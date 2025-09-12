@@ -1,28 +1,178 @@
 {
   "@context": {
-    "@vocab": "https://example.org/avsafe/hf_avc#",
+    "@version": 1.1,
+
+    /* Base vocab & prefixes */
+    "@vocab": "https://av-safe.org/ns/hf-avc#",
+    "schema": "http://schema.org/",
+    "dct": "http://purl.org/dc/terms/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "qudt": "http://qudt.org/schema/qudt/",
+    "unit": "http://qudt.org/vocab/unit/",
+
+    /* JSON-LD helpers */
     "id": "@id",
-    "title": "schema:name",
-    "country": "schema:addressCountry",
-    "period": "schema:temporalCoverage",
-    "modalities": "avs:modalities",
-    "description": "schema:description",
-    "reported_effects": "avs:reportedEffects",
-    "descriptors": "avs:descriptors",
-    "legal_ethics": "avs:legalEthics",
-    "sources": "schema:citation",
-    "laeq_bucket_db": "avs:laeqBucket",
-    "spectral_notes": "avs:spectralNotes",
-    "tlm_freq_hz": "avs:tlmFrequencyHz",
-    "tlm_mod_percent": "avs:tlmPercentModulation",
-    "notes": "schema:note",
-    "uncat": "avs:uncat",
-    "echr_article_3": "avs:echrArticle3",
-    "istanbul_protocol_refs": "avs:istanbulRefs",
-    "cases_cited": "avs:casesCited",
-    "url": "schema:url",
+    "type": "@type",
+
+    /* Case-level metadata */
+    "schema_version": "dct:hasVersion",
+    "title": "dct:title",
+    "summary": "dct:abstract",
+
+    /* Sets/lists */
+    "modalities": { "@id": "hfavc:modality", "@container": "@set" },
+    "coercion_context": { "@id": "hfavc:coercionContext", "@container": "@set" },
+    "reported_effects": { "@id": "hfavc:reportedEffect", "@container": "@set" },
+
+    /* Jurisdiction (country/place/coords) */
+    "jurisdiction": "hfavc:jurisdiction",
+    "country_iso2": { "@id": "hfavc:countryIso2", "@type": "xsd:string" },
+    "place": { "@id": "schema:addressLocality", "@type": "xsd:string" },
+    "coordinates": {
+      "@id": "schema:geo",
+      "@context": {
+        "lat": { "@id": "schema:latitude", "@type": "xsd:double" },
+        "lon": { "@id": "schema:longitude", "@type": "xsd:double" }
+      }
+    },
+
+    /* Period (loose date strings: YYYY, YYYY-MM, or YYYY-MM-DD) */
+    "period": {
+      "@id": "dct:temporal",
+      "@context": {
+        "start": { "@id": "dct:startDate", "@type": "xsd:string" },
+        "end": { "@id": "dct:endDate", "@type": "xsd:string" }
+      }
+    },
+
+    /* Exposure pattern */
+    "exposure_pattern": "hfavc:exposurePattern",
+    "continuity": { "@id": "hfavc:continuity", "@type": "xsd:string" },
+    "duty_cycle_percent": { "@id": "hfavc:dutyCycle", "@type": "xsd:decimal" },
+    "time_of_day": { "@id": "hfavc:timeOfDay", "@container": "@set" },
+    "notes": "dct:description",
+
+    /* Descriptor sets */
+    "descriptors": "hfavc:descriptorSet",
+    "audio": "hfavc:audioDescriptor",
+    "light": "hfavc:lightDescriptor",
+
+    /* Numeric value/range pattern with confidence & units */
+    "value": { "@id": "qudt:numericValue", "@type": "xsd:decimal" },
+    "range": {
+      "@id": "hfavc:range",
+      "@context": {
+        "min": { "@id": "hfavc:min", "@type": "xsd:decimal" },
+        "max": { "@id": "hfavc:max", "@type": "xsd:decimal" }
+      }
+    },
+    "confidence": { "@id": "hfavc:confidence", "@type": "xsd:decimal" },
+    "unit": { "@id": "qudt:unit", "@type": "@id" },
+
+    /* Audio metrics */
+    "laeq_db": {
+      "@id": "hfavc:LAeq",
+      "@context": {
+        "unit": { "@id": "qudt:unit", "@type": "@id", "@context": { "DECIBEL_A": "unit:DeciBelA" } }
+      }
+    },
+    "lcpeak_db": {
+      "@id": "hfavc:LCpeak",
+      "@context": {
+        "unit": { "@id": "qudt:unit", "@type": "@id", "@context": { "DECIBEL_C": "unit:DeciBelC" } }
+      }
+    },
+
+    /* Third-octave band levels as an indexed map: band_center_hz -> level_dB */
+    "third_octave_db": {
+      "@id": "hfavc:thirdOctaveBandLevel",
+      "@container": "@index",
+      "@context": {
+        "@id": "hfavc:bandLevel",
+        "@type": "xsd:decimal"
+      }
+    },
+
+    /* Modulation notes */
+    "modulation": {
+      "@id": "hfavc:modulation",
+      "@context": {
+        "repetition_index": { "@id": "hfavc:repetitionIndex", "@type": "xsd:decimal" },
+        "roughness_index": { "@id": "hfavc:roughnessIndex", "@type": "xsd:decimal" },
+        "notes": "dct:description"
+      }
+    },
+
+    /* Light metrics */
+    "tlm_freq_hz": {
+      "@id": "hfavc:tlmFrequency",
+      "@context": {
+        "unit": { "@id": "qudt:unit", "@type": "@id", "@context": { "HERTZ": "unit:HZ" } }
+      }
+    },
+    "tlm_mod_percent": {
+      "@id": "hfavc:tlmPercentModulation",
+      "@context": {
+        "unit": { "@id": "qudt:unit", "@type": "@id", "@context": { "PERCENT": "unit:PERCENT" } }
+      }
+    },
+    "flicker_index": { "@id": "hfavc:flickerIndex" },
+
+    /* Standards mapping */
+    "standards_mapping": "hfavc:standardsMapping",
+    "who_noise_2018": "hfavc:WHONoise2018Mapping",
+    "ieee_1789_2015": "hfavc:IEEE1789Mapping",
+    "night_guideline_db": { "@id": "hfavc:nightGuideline", "@type": "xsd:decimal" },
+    "likely_exceeded": { "@id": "hfavc:likelyExceeded", "@type": "xsd:boolean" },
+    "basis": { "@id": "dct:source" },
+    "zone": { "@id": "hfavc:ieee1789Zone", "@type": "xsd:string" },
+
+    /* Legal & ethics */
+    "legal_ethics": "hfavc:legalEthics",
+    "uncat": { "@id": "hfavc:UNCATCategory", "@type": "xsd:string" },
+    "echr_article_3": { "@id": "hfavc:ECHRArt3", "@type": "xsd:string" },
+    "istanbul_protocol_refs": { "@id": "hfavc:IstanbulRefs", "@container": "@set" },
+    "cases_cited": { "@id": "schema:citation", "@container": "@set" },
+
+    /* Sources */
+    "sources": { "@id": "schema:citation", "@container": "@set" },
+    "year": { "@id": "dct:issued", "@type": "xsd:gYear" },
+    "url": { "@id": "schema:url", "@type": "@id" },
     "publisher": "schema:publisher",
-    "doc_type": "schema:additionalType",
-    "provenance": "prov:wasDerivedFrom"
+    "doc_type": { "@id": "schema:additionalType", "@type": "xsd:string" },
+    "provenance_source": "prov:wasDerivedFrom",
+    "accessed": { "@id": "dct:accessed", "@type": "xsd:date" },
+    "reliability": { "@id": "hfavc:sourceReliability", "@type": "xsd:string" },
+
+    /* Coding provenance (review, κ, etc.) */
+    "provenance": {
+      "@id": "hfavc:codingProvenance",
+      "@context": {
+        "coded_by": { "@id": "hfavc:codedBy", "@container": "@set" },
+        "double_coded_by": { "@id": "hfavc:doubleCodedBy", "@container": "@set" },
+        "adjudicator": "hfavc:adjudicator",
+        "coding_date": { "@id": "dct:created", "@type": "xsd:date" },
+        "review_status": "hfavc:reviewStatus",
+        "interrater_kappa": { "@id": "hfavc:interraterKappa", "@type": "xsd:decimal" },
+        "notes": "dct:description"
+      }
+    },
+
+    /* Privacy & links */
+    "privacy": {
+      "@id": "hfavc:privacy",
+      "@context": {
+        "sensitivity": "hfavc:sensitivity",
+        "redactions": { "@id": "hfavc:redaction", "@container": "@set" }
+      }
+    },
+    "links": {
+      "@id": "hfavc:links",
+      "@context": {
+        "related_cases": { "@id": "hfavc:relatedCase", "@container": "@set" },
+        "media": { "@id": "schema:associatedMedia", "@container": "@set", "@type": "@id" }
+      }
+    }
   }
 }
