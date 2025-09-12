@@ -16,21 +16,21 @@
 ## What’s inside
 
 av-safe-toolkit/
-└─ avsafe_descriptors/
-├─ audio/ # A-weighting, 1/3-octave utilities
-├─ cli/ # Command-line tools (sim, rules_run, report, validate_cases)
-├─ hf_avc/ # Historico-forensic corpus (cases, schema, CLIs)
-│ ├─ cases/ # Case JSON (one per file)
-│ ├─ schemas/ # JSON Schema + JSON-LD context
-│ ├─ ingest_cli.py # -> hf-avc-ingest (JSON → SQLite)
-│ └─ query_cli.py # -> hf-avc-query (list/filter/export)
-│ └─ models.py # -> hf-avc-query (list/filter/export)
-├─ integrity/ # Hash chain + signing (Ed25519)
-├─ report/ # HTML report renderer
-├─ rules/ # WHO/IEEE profiles + evaluator
-└─ server/ # FastAPI receiver (ingest/evaluate/report)
-docs/
-└─ index.md, API.md, CORPUS.md, quickstart.md # Project docs
+- avsafe_descriptors/
+    - audio/ # A-weighting, 1/3-octave utilities
+    - cli/ # Command-line tools (sim, rules_run, report, validate_cases)
+    - hf_avc/ # Historico-forensic corpus (cases, schema, CLIs)
+        - cases/ # Case JSON (one per file)
+        - schemas/ # JSON Schema + JSON-LD context
+        - ingest_cli.py # -> hf-avc-ingest (JSON → SQLite)
+        - query_cli.py # -> hf-avc-query (list/filter/export)
+        - models.py # -> hf-avc-query (list/filter/export)
+    - integrity/ # Hash chain + signing (Ed25519)
+    - report/ # HTML report renderer
+    - rules/ # WHO/IEEE profiles + evaluator
+    - server/ # FastAPI receiver (ingest/evaluate/report)
+- docs/
+    - index.md, API.md, CORPUS.md, quickstart.md # Project docs
 
 Privacy-preserving audiovisual metrology (WHO/IEEE-aligned) and a historico‑forensic (HF‑AVC) corpus.
 
