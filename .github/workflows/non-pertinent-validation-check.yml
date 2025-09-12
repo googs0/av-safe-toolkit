@@ -8,21 +8,33 @@ on:
 permissions:
   contents: read
   security-events: write
-  
+
 jobs:
-  gitleaks:
+  secret-scan:
+    name: Secret scan (Gitleaks → SARIF)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # Run Gitleaks and emit SARIF
-      - name: Scan repository (Gitleaks)
-        uses: zricethezav/gitleaks-action@v2
-        with:
-          args: detect --no-banner --report-format sarif --report-path gitleaks.sarif --redact
+      # Allowlist ONLY known doc placeholders so real leaks still fail the job.
+      - name: Write minimal Gitleaks allowlist for docs
+        run: |
+          cat > .gitleaks.toml <<'EOF'
+          title = "AV-SAFE allowlist: doc placeholders only"
+          [allowlist]
+          description = "Ignore placeholder auth headers in documentation."
+          regexes = [
+            '''Authorization:\s*Bearer\s*<token>''',
+            '''Idempotency-Key:\s*<uuid-v4>'''
+          ]
+          EOF
 
-      # Upload SARIF to GitHub Security tab
-      - name: Upload SARIF
+      - name: Scan repository
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: --no-banner --config=.gitleaks.toml --report-format sarif --report-path gitleaks.sarif --redact
+
+      - name: Upload SARIF to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif
@@ -34,14 +46,17 @@ jobs:
       AVSAFE_STRICT_CRYPTO: "1"
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install deps
+
+      - name: Install project & test deps
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt || true
-          pip install pynacl || pip install cryptography
-          pip install pytest
+          pip install -e .
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          pip install pynacl pytest
+
       - name: Run crypto test
         run: pytest -q tests/test_signing_crypto.py
