@@ -8,25 +8,22 @@ on:
 permissions:
   contents: read
   security-events: write
-
+  
 jobs:
-  non-pertinent-scan:
-    name: Scan for non-pertinent material (secrets)
+  gitleaks:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout full history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Gitleaks scan
-        uses: gitleaks/gitleaks-action@v2
+      # Run Gitleaks and emit SARIF
+      - name: Scan repository (Gitleaks)
+        uses: zricethezav/gitleaks-action@v2
         with:
-          args: detect --redact --report-format sarif --report-path gitleaks.sarif
+          args: detect --no-banner --report-format sarif --report-path gitleaks.sarif --redact
 
-      - name: Upload SARIF to code scanning
+      # Upload SARIF to GitHub Security tab
+      - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
         with:
           sarif_file: gitleaks.sarif
 
