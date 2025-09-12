@@ -98,7 +98,7 @@ Content-Type: application/octet-stream
   "checks": {
     "schema": "ok",
     "chain_hash": "ok",
-    "signatures": "ok"   // "ok" | "missing" | "invalid"
+    "signatures": "ok"   # "ok" | "missing" | "invalid"
   }
 }
 ~~~
