@@ -16,13 +16,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Use committed .gitleaks.toml at repo root
-      - name: Scan repository
+      # Use a committed .gitleaks.toml at repo root, or keep this step to generate one.
+      - name: Ensure .gitleaks.toml (allowlist doc placeholders only)
+        run: |
+          if [ ! -f .gitleaks.toml ]; then
+            cat > .gitleaks.toml <<'EOF'
+            title = "AV-SAFE — allowlist for doc placeholders (API.md only)"
+            [allowlist]
+            description = "Ignore placeholder Authorization/Idempotency-Key lines in API docs; scan everything else."
+            paths = [ '''(?i)^docs/api\.md$''' ]
+            regexes = [
+              '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
+              '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
+            ]
+            EOF
+          fi
+
+      - name: Scan repository (Gitleaks)
         uses: gitleaks/gitleaks-action@v2
         with:
-          args: --no-banner --config=.gitleaks.toml --report-format sarif --report-path gitleaks.sarif --redact
+          args: >
+            --no-banner
+            --config=.gitleaks.toml
+            --source .
+            --report-format sarif
+            --report-path ./gitleaks.sarif
+            --redact
+
+      - name: Show outputs for debugging
+        run: |
+          ls -la
+          echo "----"
+          [ -f gitleaks.sarif ] && echo "Found gitleaks.sarif" || echo "Missing gitleaks.sarif"
 
       - name: Upload SARIF to GitHub Security
+        if: always() && hashFiles('gitleaks.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif
