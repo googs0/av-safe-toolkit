@@ -14,5 +14,5 @@ __pycache__/
 .venv/
 
 # Local tooling
-.secrets.baseline
+.non-pertinent.baseline
 .gitleaks.toml
