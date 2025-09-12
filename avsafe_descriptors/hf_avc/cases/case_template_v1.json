@@ -1,5 +1,6 @@
 {
   "$schema": "../schemas/case_schema_v1.json",
+  "@context": "../schemas/context.jsonld",
   "schema_version": "1.0.0",
   "@context": "https://example.org/hf-avc/context.jsonld",
   "@type": "HFAVC:Case",
