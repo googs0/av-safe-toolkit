@@ -130,6 +130,3 @@ If you’re proposing new rules or a new case type, please open an issue first s
 Add a lightweight `CITATION.cff` (optional) or cite the repo URL / release DOI if you mint one
 
 **AV-SAFE turns history and testimony into measurable, privacy-preserving evidence—so engineers, auditors, and rights monitors can fix spaces responsibly.**
-```makefile
-::contentReference[oaicite:0]{index=0}
-```
