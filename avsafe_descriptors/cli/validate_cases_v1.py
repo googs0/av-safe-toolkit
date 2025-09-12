@@ -4,7 +4,7 @@ Validate all HF-AVC case files against the JSON Schema.
 
 Usage:
   python cli/validate_cases.py
-  python cli/validate_cases.py --dir hf_avc/data/cases --schema schemas/case_schema_v1.json
+  python cli/validate_cases.py --dir hf_avc/cases --schema hf_avc/schemas/case_schema_v1.json
 """
 
 from __future__ import annotations
@@ -14,9 +14,9 @@ from jsonschema import Draft202012Validator, exceptions as jse  # pip install js
 
 def parse_args():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default="hf_avc/data/cases",
+    ap.add_argument("--dir", default="hf_avc/cases",
                     help="Directory with case JSON files.")
-    ap.add_argument("--schema", default="schemas/case_schema_v1.json",
+    ap.add_argument("--schema", default="hf_avc/schemas/case_schema_v1.json",
                     help="JSON Schema path.")
     return ap.parse_args()
 
