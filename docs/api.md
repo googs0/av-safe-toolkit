@@ -79,14 +79,14 @@ Content-Type: multipart/form-data; boundary=X-BOUNDARY-123456
 Authorization: Bearer <token>
 Idempotency-Key: 4c07c4f7-5f5e-4bb5-8f8c-0b6d9c0f2b5a
 
---X-BOUNDARY-123456
+X-BOUNDARY-123456
 Content-Disposition: form-data; name="file"; filename="minutes.jsonl"
 Content-Type: application/octet-stream
 
 {"idx":0,"ts":"2025-09-12T10:04:00Z","audio":{"laeq_db":52.1,"lcpeak_db":64.0,"third_octave_db":{"125":58.0,"250":56.5,"500":54.0,"1000":52.0,"2000":51.2}},"light":{"tlm_freq_hz":120.0,"tlm_mod_percent":7.5,"flicker_index":0.06},"chain":{"hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}
 {"idx":1,"ts":"2025-09-12T10:05:00Z","audio":{"laeq_db":53.0,"lcpeak_db":65.1,"third_octave_db":{"125":58.3,"250":56.7,"500":54.2,"1000":52.2,"2000":51.5}},"light":{"tlm_freq_hz":120.0,"tlm_mod_percent":7.6,"flicker_index":0.06},"chain":{"hash":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}}
 
---X-BOUNDARY-123456--
+X-BOUNDARY-123456
 
 
 ~~~
