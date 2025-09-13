@@ -1,18 +1,113 @@
-# Secrets / env files
+# -------------------------------
+# AV-SAFE Toolkit — .gitignore
+# Python, FastAPI, SQLite, docs
+# -------------------------------
+
+# OS cruft
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.iml
+
+# Python bytecode & caches
+__pycache__/
+*.pyc
+*.pyo
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+.cache/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# Packaging / build
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Test & coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+nosetests.xml
+coverage.xml
+pytestdebug.log
+
+# Local environment files
 .env
 .env.*
+*.env
+
+# Logs
+*.log
+logs/
+
+# SQLite & local DBs
+*.sqlite
+*.sqlite3
+*.db
+avsafe.db
+hf_avc_corpus.db
+
+# Generated runtime artifacts (sim/results/reports)
+minutes.jsonl
+results.json
+report*.html
+reports/
+tmp/
+*.sarif
+gitleaks.sarif
+results.sarif
+
+# Security keys & certs (never commit real secrets)
 *.pem
 *.key
-*private*key*
+*.der
 *.p12
 *.pfx
+*.crt
+*.cer
 
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
+# Node (if ever used for docs tooling)
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
 
-# Local tooling
-.non-pertinent.baseline
-.gitleaks.toml
+# Static site build outputs (if using a generator)
+_site/
+site/
+docs/_site/
+docs/site/
+
+# Jupyter leftovers (keep notebooks if you add them)
+.ipynb_checkpoints/
+
+# --------------------------------
+# Notes:
+# - Case JSON files under avsafe_descriptors/hf_avc/cases/ ARE tracked.
+# - Allowlist config & CI files ARE tracked:
+#     .gitleaks.toml
+#     .pre-commit-config.yaml
+# - If a whitelisted directory is empty, add a .gitkeep to keep it in Git.
+# --------------------------------
