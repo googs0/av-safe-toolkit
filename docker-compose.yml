@@ -1,9 +1,49 @@
+version: "3.9"
+
 services:
-  avsafe:
+  # -------- CLI toolbox --------
+  avsafe-cli:
     build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
+    container_name: avsafe-cli
+    working_dir: /app
     environment:
-      - AVSAFE_DB=/app/avsafe.db
+      AVSAFE_DB: /data/avsafe.db       # keep DB outside source tree if you use it
+      AVSAFE_STRICT_CRYPTO: "1"        # enforce real Ed25519 in container
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - avsafe_data:/data              # named volume for DB/files
+      - .:/app:delegated               # mount repo for live edits
+    # Keep container running so you can 'docker compose exec' or 'run' commands
+    command: tail -f /dev/null
+    restart: unless-stopped
+
+  # -------- MkDocs site (material theme) --------
+  docs:
+    image: squidfunk/mkdocs-material:latest
+    container_name: avsafe-docs
+    working_dir: /docs
+    command: mkdocs serve -a 0.0.0.0:8000
+    ports:
+      - "8001:8000"                    # open http://localhost:8001
+    volumes:
+      - .:/docs
+
+  # -------- Optional API (disabled) --------
+  # avsafe-api:
+  #   build: .
+  #   container_name: avsafe-api
+  #   environment:
+  #     AVSAFE_DB: /data/avsafe.db
+  #     AVSAFE_STRICT_CRYPTO: "1"
+  #     PYTHONUNBUFFERED: "1"
+  #   command: >
+  #     uvicorn avsafe_descriptors.server.app:app
+  #     --host 0.0.0.0 --port 8000 --workers 2
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - avsafe_data:/data
+  #   restart: unless-stopped
+
+volumes:
+  avsafe_data:
