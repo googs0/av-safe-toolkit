@@ -1,15 +1,11 @@
-title = "AV-SAFE — allowlist for doc placeholders (API.md only)"
+title = "AV-SAFE — allowlist for doc placeholders (API + Corpus)"
 
 [allowlist]
-description = "Ignore placeholder Authorization/Idempotency-Key lines in API docs; scan everything else."
-
-# Ignore ONLY the API docs file (case-insensitive).
+description = "Ignore placeholder Authorization/Idempotency-Key lines in documentation; scan everything else."
 paths = [
   '''(?i)^docs/api\.md$''',
+  '''(?i)^docs/corpus\.md$'''
 ]
-
-# Ignore ONLY these placeholder header lines, including HTML-escaped tokens
-# and with/without trailing comments.
 regexes = [
   '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
   '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
