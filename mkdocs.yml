@@ -1,10 +1,84 @@
 site_name: AV-SAFE Toolkit
 site_description: Privacy-preserving audiovisual metrology & historico-forensic corpus
+site_url: https://googs0.github.io/av-safe-toolkit/
+repo_name: googs0/av-safe-toolkit
+repo_url: https://github.com/googs0/av-safe-toolkit
+edit_uri: edit/main/docs/
+
 theme:
   name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - toc.integrate
+    - content.code.copy
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+  icon:
+    logo: material/eye          # optional; replace with a custom logo if you add one
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
 nav:
   - Home: index.md
   - Quickstart: quickstart.md
   - API: api.md
   - Corpus (HF-AVC): corpus.md
-repo_url: https://github.com/googs0/av-safe-toolkit
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+
+markdown_extensions:
+  - admonition
+  - abbr
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.magiclink
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.critic
+  - pymdownx.keys
+  - pymdownx.snippets
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/googs0/av-safe-toolkit
+      name: GitHub
+  generator: false
+
+extra_css:
+  - styles/extra.css   # optional; create docs/styles/extra.css if you want tweaks
+
+watch:
+  - avsafe_descriptors  # live-reload if you reference files from the package
