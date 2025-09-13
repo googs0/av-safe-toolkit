@@ -1,20 +1,37 @@
-## Not legal advice
-This software and documentation are provided for research and educational purposes only and do not constitute legal advice.
+# Disclaimer
 
-## Not a medical device
-The toolkit and any reference hardware are not medical devices and are not intended for diagnosis, treatment, or mitigation of disease.
+## Purpose
+This project provides **research and educational** tooling for privacy-preserving audiovisual metrology and historico-forensic analysis.
 
-## Regulatory & compliance
-Users are responsible for complying with local law and policy (e.g., consent, data-protection, workplace/tenant notification). The maintainers make no representation that use of this code or any derivative hardware complies with any specific regulation or standard.
+## No legal or medical advice / Not a medical or safety-critical device
+Nothing in this repository constitutes **legal advice** or **medical advice**. 
+The toolkit and any reference hardware are **not medical devices**
 
-## Calibration & accuracy
-Reported metrics depend on proper calibration and deployment context. Results should be interpreted with uncertainty bounds and, where required, verified with certified reference meters.
+## Regulatory compliance
+Operators are responsible for complying with applicable laws and policies (e.g., consent, data-protection, workplace/tenant notification, signage, retention).
 
-## Privacy
-This project is designed to process descriptors only (no intelligible content), but operators must still implement appropriate signage, consent, data-minimization, and retention policies according to local law.
+## Calibration & measurement uncertainty
+Reported metrics depend on **sensor quality, calibration, setup, and context**. Treat outputs with appropriate **uncertainty bounds**. Verify with **certified reference instruments** and competent personnel.
 
-## Human-subjects / IRB
-Any study involving people must follow institutional ethics review (IRB/REC) and applicable human-subjects protections. This project does not endorse harmful exposures.
+## Privacy & human subjects
+The design processes **descriptors only** (no intelligible content), but operators must still implement **data minimization, consent, signage, opt-out, retention, and access controls** consistent with local law and institutional policy.
+If your work involves people, obtain the necessary **IRB/REC approvals** and follow human-subjects protections. **This project does not endorse harmful exposure protocols**, it's quite the antithesis and kind of the entire point of this project. 
 
-## Acceptable-use pointer
-See [Acceptable Use](ACCEPTABLE_USE.md)
+## Acceptable use
+See **[ACCEPTABLE_USE.md](ACCEPTABLE_USE.md)**. Do not use this project to surveil, target, or discipline individuals; to conduct coercion; or to store raw audio/video.
+
+## Standards references
+Mappings to WHO environmental noise practice and IEEE-1789 flicker criteria are provided for interoperability.
+
+## Security & responsible disclosure
+See **[SECURITY.md](SECURITY.md)** for vulnerability reporting. Do **not** include raw audio/video or PII in reports.
+
+## Warranty & liability
+This software is provided under the **MIT License** on an **“AS IS”** basis **without warranties** of any kind. See **[LICENSE](LICENSE)** for terms and limitations of liability.
+
+## Trademarks
+All trademarks and names remain the property of their respective owners and are used for identification only.
+
+## Contact
+Questions about this disclaimer or appropriate use: **av-safe-info@proton.me**.
+
