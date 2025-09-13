@@ -7,13 +7,12 @@ services:
     container_name: avsafe-cli
     working_dir: /app
     environment:
-      AVSAFE_DB: /data/avsafe.db       # keep DB outside source tree if you use it
+      AVSAFE_DB: /data/avsafe.db       
       AVSAFE_STRICT_CRYPTO: "1"        # enforce real Ed25519 in container
       PYTHONUNBUFFERED: "1"
     volumes:
       - avsafe_data:/data              # named volume for DB/files
       - .:/app:delegated               # mount repo for live edits
-    # Keep container running so you can 'docker compose exec' or 'run' commands
     command: tail -f /dev/null
     restart: unless-stopped
 
