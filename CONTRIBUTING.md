@@ -41,7 +41,7 @@ ci: tighten secret-scan allowlist
 ```
 **7. Open a PR and fill the checklist**
    
-<br>
+---
 
 ## Adding an HF-AVC case
 This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
@@ -76,7 +76,7 @@ Add sources (URLs, publisher) that others can audit
 - `descriptors`: proxies with ranges + `confidence` (0–1); explain in `descriptors.notes`
 - `sources`: at least one with `title`, `year`, `url` (or archive ref), `provenance`
 
-# 3. Validate
+# 4. Validate
 ` avsafe_descriptors/hf_avc/schemas/case.schema.json `
 ```python
 python -m avsafe_descriptors.hf_avc.validate_cases \
@@ -84,18 +84,18 @@ python -m avsafe_descriptors.hf_avc.validate_cases \
   --cases  "avsafe_descriptors/hf_avc/cases/*.json"
 ```
 
-# 4. Ingest
+# 5. Ingest
    ```bash
    hf-avc-ingest --cases avsafe_descriptors/hf_avc/data/cases/<your_case_id>.json
    sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 5;'
    ```
-# 5. Open a PR with new case file
+# 6. Open a PR with new case file
 - Justify descriptor buckets & uncertainties
 - Note any legal/ethical tags
 - Confirm **no raw recordings** were added
 
 ## Changing rules/thresholds
-**WHO noise:** edit `noise.laeq_limits_db` in
+**WHO noise:** edit `noise.laeq_limits_db` in \
 `avsafe_descriptors/rules/profiles/who_ieee_profile.yaml`
 
 **IEEE-1789 mapping:** adjust
