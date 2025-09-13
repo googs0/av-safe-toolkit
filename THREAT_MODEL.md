@@ -43,7 +43,7 @@
 
 ---
 
-## 4) Threats (STRIDE-ish + LINDDUN-ish)
+## 4) Threats (STRIDE + LINDDUN)
 
 | Category | Example |
 |---|---|
