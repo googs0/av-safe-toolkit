@@ -1,21 +1,67 @@
+# avsafe_descriptors/rules/profiles/who_ieee_profile.yaml
+schema_version: 1.0.0
+profile_id: who_ieee_baseline_v1
+name: WHO + IEEE-1789 (baseline)
+description: >
+  Conservative baseline thresholds for privacy-preserving AV audits.
+  LAeq limits reflect general indoor comfort guidance; the flicker curve
+  approximates IEEE-1789 NOEL/low-risk practice for development/testing.
+references:
+  - WHO Environmental Noise Guidelines for the European Region (2018)
+  - IEEE 1789-2015 Recommended Practice for Modulating Current in High-Brightness LEDs
 
-name: WHO+IEEE baseline
+units:
+  noise_level: dB(A)
+  flicker_modulation: percent
+  flicker_frequency: Hz
+  integration_interval: seconds
+
 noise:
+  metric: LAeq
+  integration_seconds: 60
+  # Per-locale LAeq limits (dB(A)); if no match, falls back to "default".
   laeq_limits_db:
-    default: 55   # generic comfort guideline
+    default: 55        # general daytime indoor comfort target
     munich: 55
     berlin: 55
     lisbon: 55
     porto: 55
     cologne: 55
-  flag_threshold_pct: 10.0  # flag if >10% minutes exceed
+  # Flag if more than this % of minutes exceed the limit.
+  flag_threshold_pct: 10.0
+  notes: >
+    Treat these as conservative daytime indoor targets. If auditing night-time
+    sleeping areas, consider 40–45 dB(A) limits via a separate profile or locale
+    override.
+
 flicker:
-  # Piecewise a + b/f curve (illustrative; align to IEEE-1789 practice externally)
+  # Allowed modulation depth (%) as a function of frequency f (Hz):
+  #   allowed_mod_percent = a + b / f  (piecewise across segments)
+  model: piecewise_a_plus_b_over_f
   percent_mod_vs_freq:
-    default: 1.0
+    default: 1.0  # global cap for very high frequencies (acts as a floor for allowed %)
     segments:
-      - { f_min: 80, f_max: 120, a: 0.1, b: 600 }   # lower freq -> tighter allowed %
-      - { f_min: 120, f_max: 200, a: 0.3, b: 480 }
-      - { f_min: 200, f_max: 1000, a: 0.5, b: 400 }
-      - { f_min: 1000, f_max: 10000, a: 1.0, b: 300 }
-  flag_threshold_pct: 0.0  # flag any violations
+      - { f_min: 80,   f_max: 120,   a: 0.10, b: 600 }   # stricter at low f
+      - { f_min: 120,  f_max: 200,   a: 0.30, b: 480 }
+      - { f_min: 200,  f_max: 1000,  a: 0.50, b: 400 }
+      - { f_min: 1000, f_max: 10000, a: 1.00, b: 300 }
+  clip_percent_mod_range: [0.0, 100.0]
+  min_freq_hz: 80
+  max_freq_hz: 10000
+  # Flag any minute whose measured Mod% exceeds the model at its TLM frequency.
+  flag_threshold_pct: 0.0
+  notes: >
+    This curve is an engineering approximation, inspired by IEEE-1789 NOEL/low-risk
+    regions, intended for development and field screening. For formal judgments,
+    replace with jurisdiction-approved parameters or a lab-validated curve.
+
+locales:
+  # Helpful aliases so users can pass city names in different languages.
+  aliases:
+    köln: cologne
+    münchen: munich
+    lisboa: lisbon
+
+display:
+  percentiles: [50, 90]
+  show_third_octave: true
