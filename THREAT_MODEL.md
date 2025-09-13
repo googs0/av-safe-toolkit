@@ -136,7 +136,7 @@
 ## 11) Out of Scope (MVP)
 - Hardware TEEs / remote attestation
 - Forensic time authorities / notarization services
-- Coercive deployment scenarios (see **ACCEPTABLE_USE.md**)
+- Coercive deployment scenarios (see **[Acceptable Use](ACCEPTABLE_USE.md)**)
 - End-to-end secure telemetry transport across untrusted networks (beyond HTTPS)
 
 ---
