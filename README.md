@@ -1,19 +1,15 @@
+# AV-SAFE Toolkit
 
-# AV‑SAFE Toolkit
+AV-SAFE measures and documents audiovisual environments **without recording intelligible content**.
 
-Privacy‑preserving **minute summaries** for audio & light, **rules engine**, **hash‑chain + optional Ed25519** integrity, **SQLite‑backed FastAPI** receiver, **HTML reports**, and a **HF‑AVC corpus**.
+Privacy-preserving **minute summaries** for audio & light, a **rules engine** aligned with **WHO Environmental Noise** and **IEEE-1789** practice, **hash-chain + optional Ed25519** integrity, a **SQLite-backed FastAPI** receiver, **HTML reports**, and a **HF-AVC corpus**.
+
+- **Descriptors, not recordings:** LAeq, LCpeak, A-weighted 1/3-octaves; TLM frequency, percent modulation, flicker index  
+- **Standards-aligned:** thresholds/rules reflecting WHO noise + IEEE-1789 flicker (piecewise curves)  
+- **Evidence you can trust:** per-minute hash chaining, optional Ed25519 signatures; SQLite + FastAPI; HTML audit reports  
+- **Research-grade corpus:** JSON-LD HF-AVC module (taxonomy + threat model) mapping cases to engineering descriptors and legal/ethics tags
 
 ---
-AV-SAFE is a privacy-by-design framework for measuring and documenting audiovisual environments without recording intelligible content.
-
-* **Descriptors, not recordings:** LAeq, LCpeak, A-weighted 1/3-octaves; flicker frequency, percent modulation, flicker index.
-
-* **Standards aligned:** thresholds/rules reflecting **WHO Environmental Noise and IEEE-1789 practice** (piecewise curves).
-
-* **Evidence you can trust:** per-minute hash chaining and optional Ed25519 signatures; SQLite-backed FastAPI receiver; HTML audit reports.
-
-* **Research-grade corpus:** a JSON-LD HF-AVC module (taxonomy + threat model) for historico-forensic cases mapped to engineering descriptors and UNCAT/ECHR/Istanbul categories.
-
 
 ## Quickstart
 
@@ -22,7 +18,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e .
 pip install -r requirements-dev.txt
 
-# 1) Simulate minutes for ~6h (prints keys if --sign)
+# 1) Simulate minutes (~6h). If --sign is set the simulator prints a demo key; DO NOT COMMIT IT.
 avsafe-sim --minutes 360 --outfile minutes.jsonl --sign
 
 # 2) Evaluate rules with a WHO/IEEE profile and locale thresholds
@@ -34,10 +30,12 @@ avsafe-rules-run \
 
 # 3) Generate HTML report
 avsafe-report --minutes minutes.jsonl --results results.json --out report.html
+
 ```
 
-## Server
+---
 
+## Server
 ```bash
 uvicorn avsafe_descriptors.server.app:app --reload --port 8000
 # POST /session -> {session_id}
@@ -46,40 +44,41 @@ uvicorn avsafe_descriptors.server.app:app --reload --port 8000
 # GET  /session/{session_id}/report?public_key_hex=<hex>
 ```
 
-## HF‑AVC corpus (taxonomy & threat model)
+---
 
-Define and ingest **historico‑forensic cases** into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON‑LD context for interop.
-
+## HF-AVC corpus (taxonomy & threat model)
+Define and ingest historico-forensic cases into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON-LD context for interop.
 ```bash
 # Validate + ingest sample cases into hf_avc_corpus.db
-hf-avc-ingest --cases avsafe_descriptors/hf_avc/data/cases/*.json
+hf-avc-ingest --cases "avsafe_descriptors/hf_avc/cases/*.json"
 
 # Inspect (SQLite)
 sqlite3 hf_avc_corpus.db '.tables'
 sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 ```
-
-- JSON Schema: `avsafe_descriptors/hf_avc/schemas/case.schema.json`  
-- JSON‑LD context: `avsafe_descriptors/hf_avc/schemas/context.jsonld`  
+- JSON Schema: `avsafe_descriptors/hf_avc/schemas/case_schema_v1.json`
+- JSON-LD context: `avsafe_descriptors/hf_avc/schemas/context.jsonld`
 - Pydantic models: `avsafe_descriptors/hf_avc/models.py`
 
-## Architecture
 
-```
-[Edge/Sim] → minute JSONL (LAeq, 1/3‑oct, TLM)
-    ↓  hash‑chain + (optional) Ed25519
-[FastAPI+SQLite] → rules (WHO/IEEE) → flags → HTML report
-```
+
 
 ## Integrity & Signing
-AV-SAFE signs records to support tamper-evident reports.
+AV-SAFE supports tamper-evident reports via per-minute hash chaining and optional Ed25519 signatures.
 
-  - `AVSAFE_PRIV_HEX` — Optional **Ed25519 seed** (64 hex chars = 32 bytes).  
-  Use this locally if you want **stable signatures across runs**.
-  ```bash
-  # Example placeholder - replace locally
-  export AVSAFE_PRIV_HEX="0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210"
-  ```
+### Environment variables
+- AVSAFE_PRIV_HEX — optional Ed25519 seed (64 hex chars = 32 bytes) for stable local signatures
+- AVSAFE_STRICT_CRYPTO=1 — require real crypto in CI/prod (disable demo fallback)
+
+```bash
+# placeholder example — replace locally with your own key; DO NOT COMMIT REAL KEYS
+export AVSAFE_PRIV_HEX="<64-hex-private-key>"
+export AVSAFE_STRICT_CRYPTO="1"
+```
+
+
+
+
 
   ### Security hygiene (secrets)
   - CI scans for secrets via Gitleaks on every push/PR.
