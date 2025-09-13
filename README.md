@@ -60,15 +60,14 @@ sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 10;'
 - JSON-LD context: `avsafe_descriptors/hf_avc/schemas/context.jsonld`
 - Pydantic models: `avsafe_descriptors/hf_avc/models.py`
 
-
-
+---
 
 ## Integrity & Signing
 AV-SAFE supports tamper-evident reports via per-minute hash chaining and optional Ed25519 signatures.
 
 ### Environment variables
-- AVSAFE_PRIV_HEX — optional Ed25519 seed (64 hex chars = 32 bytes) for stable local signatures
-- AVSAFE_STRICT_CRYPTO=1 — require real crypto in CI/prod (disable demo fallback)
+  - AVSAFE_PRIV_HEX — optional Ed25519 seed (64 hex chars = 32 bytes) for stable local signatures
+  - AVSAFE_STRICT_CRYPTO=1 — require real crypto in CI/prod (disable demo fallback)
 
 ```bash
 # placeholder example — replace locally with your own key; DO NOT COMMIT REAL KEYS
@@ -76,19 +75,12 @@ export AVSAFE_PRIV_HEX="<64-hex-private-key>"
 export AVSAFE_STRICT_CRYPTO="1"
 ```
 
+### Security hygiene
+  - CI scans for secrets (Gitleaks) on each push/PR
+  - Local pre-commit uses detect-secrets with a baseline
+  - If something leaks: rotate at the provider, then run tools/purge_secret.sh "<pattern>" main and force-push
 
-
-
-
-  ### Security hygiene (secrets)
-  - CI scans for secrets via Gitleaks on every push/PR.
-  - Local pre-commit uses `detect-secrets` with a baseline.
-  - If a secret leaks: rotate at the provider, then run `tools/purge_secret.sh "<pattern>" main` and force-push.
-
-**Integrity & Signing env vars**
-- `AVSAFE_PRIV_HEX` — optional Ed25519 seed (64 hex). For stable local signatures.
-- `AVSAFE_STRICT_CRYPTO=1` — require real crypto in CI/prod (no demo fallback).
-
+---
 
 ## Ethics & Governance (quick overview)
 
@@ -99,6 +91,7 @@ export AVSAFE_STRICT_CRYPTO="1"
 - **Use cases:** architecture/ombuds audits, human-rights documentation, and reproducible metrology for AV environments—strictly anti-surveillance and ethics-forward
 - **Disclaimer:** [Disclaimer](DISCLAIMER.md)
 
+---
 
 ## Why this matters?
 
@@ -108,6 +101,8 @@ From medieval “bell” punishments to modern “no-touch” programs, archives
 * Converting ambient signals into WHO noise / IEEE-1789 flicker–aligned metrics and tamper-evident reports—without recording or storing intelligible content
 
 The corpus, rules, and privacy-preserving sensor workflow translate history and testimony into actionable reports and engineering language for auditors, architects, ombuds, and rights monitors--enabling practical prevention and accountability that respects ethics and privacy.
+
+---
 
 ## License
 Released under the **MIT License** (see [License](LICENSE)).
