@@ -34,7 +34,7 @@ More information: [Acceptable Use](ACCEPTABLE_USE.md), [Security](SECURITY.md), 
 
 ---
 
-## On-Device & server behavior
+## On-Device & Server Behavior
 
 - **On-device:** Sensors should compute descriptors locally and **discard raw signals immediately**.  
 - **Transport:** Send only minute summaries (no raw content). Use TLS where applicable.  
@@ -48,7 +48,7 @@ Configuration knobs:
 
 ---
 
-## Retention & minimization
+## Retention & Minimization
 
 - **Session TTL:** default **24 hours** (recommended).  
 - **Reports & results:** keep only what’s necessary for auditing; avoid long-term storage unless policy requires it.  
@@ -61,7 +61,7 @@ Suggested practice:
 
 ---
 
-## Integrity & security
+## Integrity & Security
 
 - **Tamper evidence:** Per-minute chain hashes; optional Ed25519 signatures
 - **Canonicalization:** Chain computed over canonical JSON to prevent ambiguity  
@@ -76,7 +76,7 @@ More info in [Security](SECURITY.md)
 
 ---
 
-## Transparency & consent
+## Transparency & Consent
 
 Deployers must:
 - Provide **signage** and/or notice that environmental descriptors are being measured
@@ -86,7 +86,7 @@ Deployers must:
 
 ---
 
-## Access & sharing
+## Access & Sharing
 
 - **Default:** No external sharing 
 - If you publish reports, ensure they contain only **aggregated descriptors** and **no PII**
@@ -94,7 +94,7 @@ Deployers must:
 
 ---
 
-## Research & analytics
+## Research & Analytics
 
 - Use **synthetic** or **public non-sensitive** data for examples/tests 
 - If you conduct studies with human participants, obtain appropriate **consent/ethics review**
