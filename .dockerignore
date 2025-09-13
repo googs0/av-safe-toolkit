@@ -1,0 +1,33 @@
+# VCS & local env
+.git
+.gitignore
+.venv
+.env
+.env.*
+
+# Python junk
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.mypy_cache/
+.pytype/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Test & local data
+tests/
+*.db
+*.sqlite
+minutes.jsonl
+results.json
+
+# Docs builds & scans
+site/
+docs/site/
+*.sarif
+.gitleaks*.*
