@@ -8,10 +8,10 @@ We are committed to a community where everyone can participate free from harassm
 
 ---
 
-## Our Pledge
+## Pledge
 We pledge to make participation in our project and community a harassment-free experience for everyone, *period*. 
 
-## Our Standards
+## Standards
 
 ### Contribute to a positive environment
 - Be respectful, considerate, and welcoming
@@ -28,7 +28,7 @@ We pledge to make participation in our project and community a harassment-free e
 - Encouraging or coordinating **harmful stimuli/exposure** experiments
 - Other conduct that would reasonably be considered inappropriate in a professional setting or at any professional capacity
 
-## Enforcement Responsibilities
+## Enforcement responsibilities
 Project maintainers are responsible for clarifying and enforcing this Code of Conduct. They may remove, edit, or reject comments, commits, code, issues, and other contributions that are not aligned with this Code, and will communicate reasons for moderation decisions when appropriate.
 
 ## Scope
@@ -38,10 +38,10 @@ This Code of conduct applies within all project spaces and also applies when an 
 Report violations to **av-safe-info@proton.me**.  
 Include: a description of the incident, where it occurred (links if possible), and any relevant context. Reports will be reviewed by maintainers listed in [MAINTAINERS.md](MAINTAINERS.md).
 
-## Enforcement Guidelines
+## Enforcement guidelines
 Maintainers will follow these community-impact guidelines in determining appropriate actions. Appeals may be sent to **av-safe-info@proton.me** and will be reviewed by maintainers not involved in the original decision whenever possible.
 
-## Integration with Acceptable Use & Safety
+## Integration with acceptable use & safety
 - This project **must not** be used to surveil, target, discipline, or coerce individuals
 - Do not request or share raw recordings, PII, or secret material
 - Violations of [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md) may result in bans
