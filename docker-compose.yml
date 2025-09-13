@@ -28,7 +28,7 @@ services:
     volumes:
       - .:/docs
 
-  # -------- Optional API (disabled) --------
+  # -------- API (disabled) --------
   # avsafe-api:
   #   build: .
   #   container_name: avsafe-api
