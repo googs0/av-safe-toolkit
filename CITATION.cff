@@ -1,14 +1,51 @@
 cff-version: 1.2.0
-title: AV-SAFE Toolkit — privacy-preserving audiovisual metrology & HF-AVC corpus
-version: 0.9.1
-date-released: 2025-10-09
+message: "If you use AV-SAFE in your work, please cite it as below."
+title: "AV-SAFE Toolkit — privacy-preserving audiovisual metrology & HF-AVC corpus"
+version: "0.9.1"
+date-released: "2025-10-09"
+
+# Keep authors minimal if you don't want to list full names.
 authors:
-  - name: Michael G / AV-SAFE contributors 
-repository-code: https://github.com/googs0/av-safe-toolkit
-license: MIT
+  - name: "AV-SAFE Contributors"
+  # - name: "Michael"
+
+contact:
+  - name: "AV-SAFE Maintainers"
+    email: "av-safe-info@proton.me"
+
+repository-code: "https://github.com/googs0/av-safe-toolkit"
+url: "https://github.com/googs0/av-safe-toolkit"
+license: "MIT"
+
+keywords:
+  - acoustics
+  - noise
+  - WHO
+  - IEEE-1789
+  - flicker
+  - A-weighting
+  - third-octave
+  - privacy
+  - forensics
+  - hash-chain
+  - sqlite
+  - fastapi
+
+abstract: >
+  AV-SAFE converts ambient audio and light into standards-aligned descriptors
+  (WHO environmental noise, IEEE-1789 flicker) and tamper-evident reports—without
+  recording intelligible content. It includes a historico-forensic (HF-AVC) corpus
+  and rule profiles for risk auditing, with an emphasis on privacy-first engineering.
+
 preferred-citation:
   type: software
-  title: AV-SAFE Toolkit
+  title: "AV-SAFE Toolkit"
+  version: "0.9.1"
   authors:
-    - name: AV-SAFE Toolkit Contributors
-  year: 2025
+    - name: "AV-SAFE Contributors"
+  repository-code: "https://github.com/googs0/av-safe-toolkit"
+  url: "https://github.com/googs0/av-safe-toolkit"
+  date-released: "2025-10-09"
+  identifiers:
+    - type: doi
+      value: ""  # replace
