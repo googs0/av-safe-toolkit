@@ -94,6 +94,8 @@ python -m avsafe_descriptors.hf_avc.validate_cases \
 - Note any legal/ethical tags
 - Confirm **no raw recordings** were added
 
+---
+
 ## Changing rules/thresholds
 **WHO noise:** edit `noise.laeq_limits_db` in \
 `avsafe_descriptors/rules/profiles/who_ieee_profile.yaml`
@@ -103,24 +105,27 @@ python -m avsafe_descriptors.hf_avc.validate_cases \
 - Provide a brief rationale and, when possible, cite a primary source
 - Add/update tests showing the flag/threshold behavior
 
+---
+
 ## Tests & quality
 - Use `pytest`; aim for meaningful coverage of new logic
 - Prefer deterministic tests (fixed seeds, stable thresholds)
 - Keep outputs stable across platforms (avoid locale-dependent formatting)
 
+---
+
 ## Secrets & pre-commit (important)
 - Do not commit private keys, seeds, or tokens
 - A minimal allowlist ignores only doc placeholders; real leaks still fail CI
+  
+---
 
-Local scan (optional):
-
-## Privacy & security checklist (before you push)
-  ⃝ No raw audio/video/images anywhere in the repo or examples \
-  ⃝ No private keys or credentials (the simulator prints test keys, do not commit them) \
-  ⃝ If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
-
-<br>
-
+## Privacy & security checklist
+- No raw audio/video/images anywhere in the repo or examples \
+- No private keys or credentials (the simulator prints test keys, do not commit them) \
+- If you touched integrity/signing, include a brief note in the PR about hash-chain continuity
+  
+---
 
 **Questions / Concerns:** [av-safe-info@proton.me](av-safe-info@proton.me)
 
