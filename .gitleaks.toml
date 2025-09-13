@@ -1,12 +1,25 @@
-title = "AV-SAFE — allowlist for doc placeholders (API + Corpus)"
+title = "AV-SAFE — allowlist (docs placeholders only)"
 
 [allowlist]
-description = "Ignore placeholder Authorization/Idempotency-Key lines in documentation; scan everything else."
+description = "Ignore placeholder auth headers and dummy hashes in docs; scan everything else."
+
+# Restrict allowlist to specific documentation files only
 paths = [
   '''(?i)^docs/api\.md$''',
+  '''(?i)^docs/quickstart\.md$''',
   '''(?i)^docs/corpus\.md$'''
 ]
+
+# Ignore ONLY explicit placeholders (not real secrets)
 regexes = [
-  '''^Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)(\s*#.*)?$''',
-  '''^Idempotency-Key:\s*(<uuid-v4>)(\s*#.*)?$'''
+  # Auth/idempotency placeholders shown in examples
+  '''^\s*Authorization:\s*Bearer\s*(<token>|&lt;token&gt;)\s*(#.*)?$''',
+  '''^\s*Idempotency-Key:\s*<uuid-v4>\s*(#.*)?$''',
+
+  # Explicit demo hex placeholders (if you show them literally)
+  '''"public_key_hex"\s*:\s*"<hex>"''',
+  '''"signature_hex"\s*:\s*"<hex>"''',
+
+  # Dummy chain hashes used in examples (all 'a' or all 'b'); still flags real-looking random hex elsewhere
+  '''"hash"\s*:\s*"(a{64}|b{64})"'''
 ]
