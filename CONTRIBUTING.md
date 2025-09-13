@@ -12,25 +12,25 @@ Thanks for your interest in improving AV‑SAFE! This project advances **privacy
 ---
 
 ## How to contribute
-**1. Open an Issue to discuss significant changes**
-**2. Fork and branch**
+### 1. Open an Issue to discuss significant changes
+### 2. Fork and branch 
    ```bash
    git checkout -b feat/short-name  # or fix/..., docs/..., rules/..., corpus/...
    ```
-**3. Dev Setup**
+### 3. Dev Setup
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e .
 pip install -r requirements-dev.txt
 pre-commit install
 ```
-**4. Add tests**
-**5. Style:**
+### 4. Add tests
+### 5. Style
    ```bash
    pre-commit install
    pre-commit run -a      # format/lint before you push (optional if you dislike auto-lint)
    ```
-**6. Conventional commits:**
+### 6. Conventional commits
 ```vbnet
 feat: add IEEE-1789 segment 1–2 kHz
 fix: correct noise percentiles
@@ -39,7 +39,7 @@ rules: raise night guideline to 45 dB
 corpus: add case:us_1993_waco_summary
 ci: tighten secret-scan allowlist
 ```
-**7. Open a PR and fill the checklist**
+### 7. Open a PR and fill the checklist
    
 ---
 
@@ -49,12 +49,12 @@ This project accepts historico-forensic cases as JSON files that validate agains
 - **Schema:** `avsafe_descriptors/hf_avc/schemas/case_schema_v1.json`
 - **JSON-LD context:** `avsafe_descriptors/hf_avc/schemas/context.jsonld`
 
-# 1. Copy template
+### 1. Copy template
    ```bash
    cp avsafe_descriptors/hf_avc/data/cases/CASE_TEMPLATE.json \
    avsafe_descriptors/hf_avc/data/cases/<your_case_id>.json
    ```
-# 2. Keep the header (inside the outer { ... })
+### 2. Keep the header (inside the outer { ... })
 ```json
 "$schema": "../schemas/case_schema_v1.json",
 "schema_version": "1.0.0",
@@ -62,7 +62,7 @@ This project accepts historico-forensic cases as JSON files that validate agains
 "@type": "HFAVC:Case",
 ```
 
-# 3. Fill required fields
+### 3. Fill required fields
 Keep descriptors neutral \
 Map narrative intensity to descriptor buckets (e.g laeq_bucket_db: '65-80') \
 Add sources (URLs, publisher) that others can audit
@@ -76,7 +76,7 @@ Add sources (URLs, publisher) that others can audit
 - `descriptors`: proxies with ranges + `confidence` (0–1); explain in `descriptors.notes`
 - `sources`: at least one with `title`, `year`, `url` (or archive ref), `provenance`
 
-# 4. Validate
+### 4. Validate
 ` avsafe_descriptors/hf_avc/schemas/case.schema.json `
 ```python
 python -m avsafe_descriptors.hf_avc.validate_cases \
@@ -84,12 +84,12 @@ python -m avsafe_descriptors.hf_avc.validate_cases \
   --cases  "avsafe_descriptors/hf_avc/cases/*.json"
 ```
 
-# 5. Ingest
+### 5. Ingest
    ```bash
    hf-avc-ingest --cases avsafe_descriptors/hf_avc/data/cases/<your_case_id>.json
    sqlite3 hf_avc_corpus.db 'SELECT id,title,period FROM hf_cases LIMIT 5;'
    ```
-# 6. Open a PR with new case file
+### 6. Open a PR with new case file
 - Justify descriptor buckets & uncertainties
 - Note any legal/ethical tags
 - Confirm **no raw recordings** were added
