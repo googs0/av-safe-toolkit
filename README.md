@@ -2,7 +2,7 @@
 
 AV-SAFE measures and documents audiovisual environments **without recording intelligible content**.
 
-Privacy-preserving **minute summaries** for audio & light, a **rules engine** aligned with **WHO Environmental Noise** and **IEEE-1789** practice, **hash-chain + optional Ed25519** integrity, a **SQLite-backed FastAPI** receiver, **HTML reports**, and a **HF-AVC corpus**.
+Privacy-preserving **minute summaries** for audio & light, a **rules engine** aligned with **WHO Environmental Noise** and **IEEE-1789** practice, **hash-chain + optional Ed25519** integrity, a **SQLite-backed API** receiver, **HTML reports**, and a **HF-AVC corpus**.
 
 - **Descriptors, not recordings:** LAeq, LCpeak, A-weighted 1/3-octaves; TLM frequency, percent modulation, flicker index  
 - **Standards-aligned:** thresholds/rules reflecting WHO noise + IEEE-1789 flicker (piecewise curves)  
