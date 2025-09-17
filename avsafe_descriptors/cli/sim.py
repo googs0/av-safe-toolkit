@@ -32,20 +32,33 @@ import traceback
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
-# ---- Imports from project (optional for nicer realism) ----
+import numpy as np
+
+# ---- Imports from project (prefer real helpers, gracefully degrade otherwise) ----
+_nominal_centers = None
+_overall_level_dba = None
 try:
-    # Prefer your pro-grade utilities if present
-    from ..dsp.third_octave import nominal_centers as _nominal_centers
-    from ..dsp.a_weighting import overall_level_dba as _overall_level_dba
+    # Correct paths for this repo layout
+    from ..audio.third_octave import nominal_centers as _nominal_centers  # type: ignore
 except Exception:
-    _nominal_centers = None
-    _overall_level_dba = None
+    pass
+try:
+    from ..audio.a_weighting import overall_level_dba as _overall_level_dba  # type: ignore
+except Exception:
+    pass
 
 try:
     from ..integrity.hash_chain import chain_hash, canonical_json  # type: ignore
     from ..integrity.signing import sign_bytes  # type: ignore
 except Exception as e:  # pragma: no cover
     print("FATAL: cannot import integrity utilities.", file=sys.stderr)
+    raise
+
+# Light (Temporal Light Modulation) metrics
+try:
+    from ..light import window_metrics, MinuteAggregator  # type: ignore
+except Exception as e:
+    print("FATAL: light/TLM module not found. Add avsafe_descriptors/light/.", file=sys.stderr)
     raise
 
 EXIT_OK = 0
@@ -73,7 +86,7 @@ def _utc_iso(dt_utc: dt.datetime) -> str:
 
 
 def _default_third_centers(fmin: float, fmax: float) -> List[float]:
-    """Nominal IEC 1/3-oct centers between fmin..fmax (Hz). Fallback to a small list if dsp module missing."""
+    """Nominal IEC 1/3-oct centers between fmin..fmax (Hz). Fallback to a small list if audio module missing."""
     if _nominal_centers is not None:
         return [float(x) for x in _nominal_centers(fmin_hz=fmin, fmax_hz=fmax)]
     # Fallback conservative set
@@ -88,8 +101,6 @@ def _pinkish_spectrum(centers: Sequence[float], laeq_target: float, rng: random.
     Create a pinkish 1/3-oct spectrum around a target LAeq (dB). If A-weighting is available,
     scale so that the A-weighted sum matches the target LAeq. Otherwise, just return a plausible shape.
     """
-    # Build an initial slope around 1 kHz: ~ -3 dB/oct, with a bit of jitter
-    # Compute per-band base levels
     levels = []
     for fc in centers:
         octaves_from_1k = math.log2(fc / 1000.0)
@@ -98,11 +109,15 @@ def _pinkish_spectrum(centers: Sequence[float], laeq_target: float, rng: random.
 
     # If we can compute A-weighted sum, scale to match target
     if _overall_level_dba is not None:
-        computed = _overall_level_dba(levels, centers)
-        if computed != float("-inf"):
-            delta = laeq_target - computed
-            levels = [L + delta for L in levels]
+        try:
+            computed = _overall_level_dba(levels, centers)  # type: ignore
+            if computed != float("-inf"):
+                delta = laeq_target - computed
+                levels = [L + delta for L in levels]
+        except Exception:
+            pass
 
+    # Keys as nominal center frequencies; keep small ones with one decimal for readability
     return {str(int(round(c))) if c >= 100 else str(round(c, 1)): round(L, 1)
             for c, L in zip(centers, levels)}
 
@@ -146,6 +161,38 @@ def _ensure_out_path(path: Path, overwrite: bool) -> None:
         raise FileExistsError(f"Output exists: {path}. Use --overwrite to replace.")
 
 
+def _synth_light_signal(
+    seconds: float,
+    fs: float,
+    f0_hz: float,
+    mod_percent: float,
+    rng: random.Random,
+    dc: float = 1.0,
+    noise_rms: float = 0.01
+) -> List[float]:
+    """
+    Simple non-negative 'lux-like' signal with sinusoidal TLM and a bit of noise.
+    x(t) = dc * (1 + m * sin(2π f0 t)) + noise, clipped at 0
+    where m = mod_percent/100.
+    """
+    n = int(round(seconds * fs))
+    if n <= 0:
+        return [dc]
+    m = max(0.0, mod_percent) / 100.0
+    two_pi_f = 2.0 * math.pi * f0_hz
+    x = []
+    # Deterministic gaussian via RNG (Box–Muller)
+    for i in range(n):
+        t = i / fs
+        val = dc * (1.0 + m * math.sin(two_pi_f * t))
+        if noise_rms > 0:
+            u1, u2 = rng.random(), rng.random()
+            z = ( (-2.0*math.log(max(u1, 1e-12))) ** 0.5 ) * math.cos(2*math.pi*u2)
+            val += z * noise_rms
+        x.append(val if val > 0 else 0.0)
+    return x
+
+
 # ----------------------- main generation -----------------------
 
 def gen_minute_record(
@@ -175,11 +222,25 @@ def gen_minute_record(
     # LCpeak offset
     lcpeak = laeq + rng.uniform(*lcpeak_extra_range)
 
-    # Flicker path
+    # ---- Light / TLM path (simulate 60 s, compute minute summary) ----
     tlm_f = float(rng.choice(tlm_freq_choices))
     tlm_mod = max(0.0, rng.gauss(tlm_mod_base, tlm_mod_sigma))
     tlm_mod = _apply_flicker_spike(tlm_mod, flicker_spike, idx)
-    flicker_index = round(rng.uniform(*flicker_index_range), 3)
+
+    light_fs = getattr(gen_minute_record, "_light_fs", 2000.0)           # injected from main()
+    mains_hint = getattr(gen_minute_record, "_mains_hint", 50.0)         # injected from main()
+    light_noise = getattr(gen_minute_record, "_light_noise_rms", 0.01)   # injected from main()
+
+    light = _synth_light_signal(
+        seconds=60.0, fs=light_fs, f0_hz=tlm_f, mod_percent=tlm_mod, rng=rng,
+        dc=1.0, noise_rms=light_noise
+    )
+    agg = MinuteAggregator()
+    for m in window_metrics(np.array(light, dtype=float), fs=light_fs,
+                            window_s=1.0, step_s=1.0, mains_hint=mains_hint):
+        agg.add(m)
+    minute_light = agg.summary()
+    # ---------------------------------------------------------------
 
     # Payload
     payload = {
@@ -193,9 +254,14 @@ def gen_minute_record(
             "third_octave_db": bands,
         },
         "light": {
-            "tlm_freq_hz": tlm_f,
+            # Standards-aligned keys used by rules/IEEE-1789 evaluator:
+            "f_flicker_Hz": minute_light.get("f_flicker_Hz"),
+            "pct_mod_p95": minute_light.get("pct_mod_p95"),
+            "flicker_index_p95": minute_light.get("flicker_index_p95"),
+            # Optional legacy-style fields for backward compatibility:
+            "tlm_freq_hz": minute_light.get("f_flicker_Hz"),
             "tlm_mod_percent": round(tlm_mod, 2),
-            "flicker_index": flicker_index,
+            "flicker_index": minute_light.get("flicker_index_p95"),
         },
     }
 
@@ -244,7 +310,15 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p.add_argument("--third-range", type=str, default="100-5000",
                    help="Generate nominal 1/3-oct centers in this Hz range (e.g., '100-5000'). Ignored if --third-bands is set.")
 
-    # Light model knobs
+    # Light model knobs (simulator-only)
+    p.add_argument("--light-fs", type=float, default=2000.0,
+                   help="Light sampling rate used in the simulator (Hz). Default: 2000.0")
+    p.add_argument("--mains-hint", type=float, default=50.0, choices=[50.0, 60.0],
+                   help="Mains frequency hint for flicker (50 or 60). Default: 50.0")
+    p.add_argument("--light-noise-rms", type=float, default=0.01,
+                   help="Additive noise RMS for simulated light signal. Default: 0.01")
+
+    # Light selection knobs
     p.add_argument("--tlm-freqs", type=str, default="100,120,180,300,1000",
                    help="Comma-separated TLM frequencies to sample from (Hz).")
     p.add_argument("--tlm-mod-base", type=float, default=2.0, help="Baseline modulation depth mean (percent). Default: 2.0")
@@ -324,6 +398,11 @@ def main(argv: Optional[List[str]] = None) -> int:
             print(f"ERROR: {e}", file=sys.stderr)
             return EXIT_BAD_ARGS
 
+    # Inject simulator constants for light signal synthesis
+    gen_minute_record._light_fs = float(args.light_fs)                 # type: ignore[attr-defined]
+    gen_minute_record._mains_hint = float(args.mains_hint)             # type: ignore[attr-defined]
+    gen_minute_record._light_noise_rms = float(args.light_noise_rms)   # type: ignore[attr-defined]
+
     # Generate
     prev_hash: Optional[str] = None
     try:
@@ -354,7 +433,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                     flicker_spike=flicker_spike,
                     device_id=args.device_id,
                     schema=args.schema,
-                    sign=args.sign,
+                    sign=bool(args.sign),
                 )
                 prev_hash = rec["chain"]["hash"]
                 out_f.write(json.dumps(rec, ensure_ascii=False) + "\n")
