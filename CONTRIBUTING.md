@@ -44,7 +44,7 @@ ci: tighten secret-scan allowlist
 ---
 
 ## Adding an HF-AVC case
-This project accepts historico-forensic cases as JSON files that validate against our schema and avoid sensational detail
+This project accepts historical-forensic cases as JSON files that validate against our schema and avoid sensational detail
 - **Template:** `avsafe_descriptors/hf_avc/cases/case_template_v1.json`
 - **Schema:** `avsafe_descriptors/hf_avc/schemas/case_schema_v1.json`
 - **JSON-LD context:** `avsafe_descriptors/hf_avc/schemas/context.jsonld`
