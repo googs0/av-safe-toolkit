@@ -17,7 +17,9 @@ All notable changes to this project will be documented here.
 `make test`: runs pytest suite
 `make clean` — removes build/e2e-video/
 
-
+### Updated
+- .gitignore 
+  
 ---
 
 ## [0.9.1] - 2025-13-SEP
