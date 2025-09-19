@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented here.
 
+## [0.9.1] - 2025-19-SEP
+### Added
+- Video luminance heler (video → luma): `avsafe_descriptors/video/__init__.py`,
+`avsafe_descriptors/video/luma.py`: reads video via `imageio` returns `(y, fs)` where y = luma/frame and fs = FPS
+- CLI to turn video to TLM metrics: `avsafe_descriptors/cli/video_to_light.py` — `avsafe-video-to-light --in clip.mp4 --minute --jsonl minutes.jsonl` reduces video to luminance and computes flicker metrics per window or as a minute summary.
+- Smoke Test for Video: `tools/video_smoke.py` - quick manual check (video → minute summary), prints JSON to stdout.
+- End-to-end test pipeline (video → summaries → rules → report): `tests/test_e2e_video_pipeline.py` — synthesizes two 1-minute 64×64 clips (10 Hz flicker @30 fps and constant control), runs `avsafe-video-to-light` to produce `minutes.jsonl`, then runs rules/report CLIs if present (fallbacks included). Produces an HTML report in a temp dir and asserts presence/size.
+- Integration tests for short clips: `tests/test_video_to_tlm.py` — synthesizes small 5 s clips (10 Hz flicker @60 fps, 100 Hz PWM @30 fps which aliases ≈10 Hz, and constant control) and verifies dominant frequency/modulation within tolerances.
+- **Makefile** for one-command E2E run:
+`make setup-dev`: installs dev deps
+`make videos`: generates 1-minute sample videos if missing
+`make e2e-video`: video → minute summaries → WHO/IEEE rules → HTML report (outputs in `build/e2e-video/`)
+`make smoke-video`: quick smoke using your helper script
+`make test`: runs pytest suite
+`make clean` — removes build/e2e-video/
+
+
+---
 
 ## [0.9.1] - 2025-13-SEP
 ### Added
