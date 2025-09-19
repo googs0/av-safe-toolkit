@@ -47,7 +47,7 @@ uvicorn avsafe_descriptors.server.app:app --reload --port 8000
 ---
 
 ## HF-AVC corpus (taxonomy & threat model)
-Define and ingest historico-forensic cases into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON-LD context for interop.
+Define and ingest historical-forensic cases into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON-LD context for interop.
 ```bash
 # Validate + ingest sample cases into hf_avc_corpus.db
 hf-avc-ingest --cases "avsafe_descriptors/hf_avc/cases/*.json"
