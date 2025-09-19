@@ -20,13 +20,16 @@ $RECYCLE.BIN/
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 *$py.class
 .pytest_cache/
 .mypy_cache/
 .pyre/
 .pytype/
 .ruff_cache/
+.pyrightcache/
 .cache/
+.hypothesis/
 
 # Virtualenvs
 .venv/
@@ -43,6 +46,10 @@ wheels/
 .eggs/
 pip-wheel-metadata/
 
+# Generated test videos
+tests/assets/video/*.mp4
+tests/assets/video/*.gif
+
 # Test & coverage
 .coverage
 .coverage.*
@@ -57,6 +64,7 @@ pytestdebug.log
 .env
 .env.*
 *.env
+.envrc
 
 # Logs
 *.log
@@ -103,6 +111,9 @@ docs/site/
 # Jupyter leftovers (keep notebooks if you add them)
 .ipynb_checkpoints/
 
+# Profiling artifacts
+profile*.prof
+
 # --------------------------------
 # Notes:
 # - Case JSON files under avsafe_descriptors/hf_avc/cases/ ARE tracked.
@@ -110,4 +121,8 @@ docs/site/
 #     .gitleaks.toml
 #     .pre-commit-config.yaml
 # - If a whitelisted directory is empty, add a .gitkeep to keep it in Git.
+
+# uncomment if you don't use these tools
+# poetry.lock
+# Pipfile.lock
 # --------------------------------
