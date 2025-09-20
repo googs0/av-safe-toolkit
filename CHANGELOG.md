@@ -3,7 +3,7 @@ All notable changes to this project will be documented here.
 
 ## [0.9.1] - 2025-19-SEP
 ### Added
-- Video luminance heler (video → luma): `avsafe_descriptors/video/__init__.py`,
+- Video luminance helper (video → luma): `avsafe_descriptors/video/__init__.py`,
 `avsafe_descriptors/video/luma.py`: reads video via `imageio` returns `(y, fs)` where y = luma/frame and fs = FPS
 - CLI to turn video to TLM metrics: `avsafe_descriptors/cli/video_to_light.py` — `avsafe-video-to-light --in clip.mp4 --minute --jsonl minutes.jsonl` reduces video to luminance and computes flicker metrics per window or as a minute summary.
 - Smoke Test for Video: `tools/video_smoke.py` - quick manual check (video → minute summary), prints JSON to stdout.
