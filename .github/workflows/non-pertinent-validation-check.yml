@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # If you already committed a .gitleaks.toml at repo root, this step does nothing.
+      # !! gitleaks.toml at repo root, this step does nothing.
       - name: Ensure .gitleaks.toml (allowlist doc placeholders only)
         shell: bash
         run: |
