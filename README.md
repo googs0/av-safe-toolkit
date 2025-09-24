@@ -6,7 +6,7 @@ Privacy-preserving **minute summaries** for audio & light, a **rules engine** al
 
 - **Descriptors, not recordings:** LAeq, LCpeak, A-weighted 1/3-octaves; TLM frequency, percent modulation, flicker index  
 - **Standards-aligned:** thresholds/rules reflecting WHO noise + IEEE-1789 flicker (piecewise curves)  
-- **Evidence you can trust:** per-minute hash chaining, optional Ed25519 signatures; SQLite + FastAPI; HTML audit reports  
+- **Evidence you can trust:** per-minute hash chaining, optional Ed25519 signatures; SQLite; HTML audit reports  
 - **Research-grade corpus:** JSON-LD HF-AVC module (taxonomy + threat model) mapping cases to engineering descriptors and legal/ethics tags
 
 ---
