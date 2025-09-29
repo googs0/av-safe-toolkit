@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented here.
 
+## [0.9.1] - 2025-29-SEP
+### Added
+- Cloud folder
+- `cloud/requirements.txt`
+- `cloud/common.py` utility toolkit handling S3/DynamoDB I/O, parsing JSONL minute logs, loading device public keys, verifies signature + hash-chain, and runs WHO/IEEE rules + HTML report
+- `cloud/api_app.py` (FastAPI + Mangum); **POST** `/ingest/start` returns pre-signed URL for PI to upload `minutes.json.gz` to `s3://RAW_BUCKET/raw/{case_id}/{ts}.jsonl.gz`; **GET** `/health` simple health check
+- `cloud/verify_lambda.py` S3 trigger on `raw/` uploads; downloads uploaded JSONL(.gz), verifies signature + hash-chain, writes a result JSON & canonicalized minutes to `verified/`, updates DynamoDB status for case for next Lambda to find
+- `cloud/rules_lambda.py` S3 triggers on `verified/*/minutes.jsonl` loads verified minutes, runs WHO/IEEE rules, renders HTML report, writes to `reports/`
+- `cloud/template.yaml` very minimal AWS serverless application model (SAM)
+
+### Updated
+- `rules_run.py` bug fix (L88-91)
+
+
 ## [0.9.1] - 2025-19-SEP
 ### Added
 - Video luminance helper (video → luma): `avsafe_descriptors/video/__init__.py`,
