@@ -85,10 +85,10 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
         help="Allow overwriting an existing output file.",
     )
     fmt = p.add_mutually_exclusive_group()
-    fmt.add_argument(
-        "--pretty",
-        action="true",
-        help=argparse.SUPPRESS,  # keep CLI clean; use --indent instead (preferred)
+    #fmt.add_argument(
+        #"--pretty",
+       # action="true",
+       # help=argparse.SUPPRESS,  # keep CLI clean; use --indent instead (preferred)
     )
     p.add_argument(
         "--indent",
