@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AV-SAFE serverless skeleton
+
+Parameters:
+  RawBucketName:        { Type: String, Default: avsafe-raw-demo }
+  VerifiedBucketName:   { Type: String, Default: avsafe-verified-demo }
+  ReportsBucketName:    { Type: String, Default: avsafe-reports-demo }
+  CasesTableName:       { Type: String, Default: avsafe_cases }
+  PublicKeyS3Uri:       { Type: String, Default: "" }
+
+Globals:
+  Function:
+    Runtime: python3.11
+    Timeout: 60
+    MemorySize: 512
+    Environment:
+      Variables:
+        RAW_BUCKET: !Ref RawBucketName
+        VERIFIED_BUCKET: !Ref VerifiedBucketName
+        REPORTS_BUCKET: !Ref ReportsBucketName
+        TABLE_NAME: !Ref CasesTableName
+        PUBLIC_KEY_S3_URI: !Ref PublicKeyS3Uri
+    Policies:
+      - AmazonS3FullAccess
+      - AmazonDynamoDBFullAccess
+      - AWSLambdaBasicExecutionRole
+
+Resources:
+  RawBucket:
+    Type: AWS::S3::Bucket
+    Properties: { BucketName: !Ref RawBucketName, VersioningConfiguration: { Status: Enabled } }
+
+  VerifiedBucket:
+    Type: AWS::S3::Bucket
+    Properties: { BucketName: !Ref VerifiedBucketName, VersioningConfiguration: { Status: Enabled } }
+
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties: { BucketName: !Ref ReportsBucketName, VersioningConfiguration: { Status: Enabled } }
+
+  CasesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref CasesTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: case_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: case_id
+          KeyType: HASH
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api_app.handler
+      CodeUri: ./
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+
+  VerifyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: verify_lambda.handler
+      CodeUri: ./
+      Events:
+        S3PutRaw:
+          Type: S3
+          Properties:
+            Bucket: !Ref RawBucket
+            Events: s3:ObjectCreated:Put
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: raw/
+
+  RulesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: rules_lambda.handler
+      CodeUri: ./
+      Events:
+        S3PutVerifiedMinutes:
+          Type: S3
+          Properties:
+            Bucket: !Ref VerifiedBucket
+            Events: s3:ObjectCreated:Put
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: /minutes.jsonl
