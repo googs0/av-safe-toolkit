@@ -1,6 +1,8 @@
 # Changelog
 All notable changes to this project will be documented here.
 
+---
+
 ## [0.9.1] - 2025-29-SEP
 ### Added
 - Cloud folder
@@ -14,6 +16,7 @@ All notable changes to this project will be documented here.
 ### Updated
 - `rules_run.py` bug fix (L88-91)
 
+---
 
 ## [0.9.1] - 2025-19-SEP
 ### Added
