@@ -114,6 +114,11 @@ docs/site/
 # Profiling artifacts
 profile*.prof
 
+# Cloud
+local_data/
+cloud/__pycache__/
+cloud/*.pyc
+
 # --------------------------------
 # Notes:
 # - Case JSON files under avsafe_descriptors/hf_avc/cases/ ARE tracked.
