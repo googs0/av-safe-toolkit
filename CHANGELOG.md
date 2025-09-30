@@ -26,7 +26,7 @@ All notable changes to this project will be documented here.
 - `cloud/requirements.txt` - app deps (fastAPI, Mangum, jose, requests, uvicorn
 - `cloud/template.yaml` - AWS SAM template (function URL for API); s3 triggers; DynamoDB)
 - `cloud/__init__.py` - marks package for `-m` execution
-- Security / Auth - all API endpoints (except `/health`) require
+- Security / Auth - all API endpoints (except `/health`) require:
   - DEV mode or JWT mode
   - Device signature verification supported via public key map (DynamoDB `devices` table or s3 JSON which is enforced by `verify_lambda.py`
 
