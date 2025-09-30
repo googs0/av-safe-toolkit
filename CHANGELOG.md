@@ -3,14 +3,39 @@ All notable changes to this project will be documented here.
 
 ---
 
+## [0.9.1] - 2025-30-SEP
+### Added
+Cloud stack (local + AWS-ready)
+- `cloud/api_app.py` - fastAPI with endpoints:
+  - `GET /health`
+  - `POST /cases` (create case)
+  - `GET /cases/{case_id}` (status)
+  - `POST /ingest/start` (pre-signed upload URL)
+- `cloud/auth.py` - pluggable authentication:
+  - **DEV mode** via static bearer token (`AUTH_MODE=dev`, `DEV_TOKEN`
+  - **JWT mode** with JWKS/OIDC validation (`AUTH_MODE=jwt`, `JWKS_URL`
+  - Optional: `JWKS_AUDIENCE`, `JWKS_ISSUER`)
+- `cloud/common.py` - shared helpers
+  - when `LOCAL_MODE=1`, S3/DynamoDB emulate `./local_data/` + SQLite (`cases.db`)
+  - when not local: users real S3/DynamoDB (AWS) and utilities are as follows: signed URL helpers, JSONL IO (gz aware), device pubkey load, case registry, chain/signature verification, rules, and HTML rendering
+- `cloud/verify_lambda.py` - verifies hash-chain + signatures and writes `verified/` and updates case status
+- `cloud/rules_lambda.py` - offline pipeline runner (raw to verified to report for LOCAL_MODE:
+  - `python -m cloud.local_runner --once`
+  - `python -m cloud.local_runner --watch`
+- `cloud/requirements.txt` - app deps (fastAPI, Mangum, jose, requests, uvicorn
+- `cloud/template.yaml` - AWS SAM template (function URL for API); s3 triggers; DynamoDB)
+- `cloud/__init__.py` - marks package for `-m` execution
+
+### Updated
+- Makefile (merged with cloud targets. Cloud artifacts go to `build/cloud/` to not clash with `build/e2e-video/`
+- `template.yaml` SAM to function URL
+
+---
+
 ## [0.9.1] - 2025-29-SEP
 ### Added
 - Cloud folder
 - `cloud/requirements.txt`
-- `cloud/common.py` utility toolkit handling S3/DynamoDB I/O, parsing JSONL minute logs, loading device public keys, verifies signature + hash-chain, and runs WHO/IEEE rules + HTML report
-- `cloud/api_app.py` (FastAPI + Mangum); **POST** `/ingest/start` returns pre-signed URL for PI to upload `minutes.json.gz` to `s3://RAW_BUCKET/raw/{case_id}/{ts}.jsonl.gz`; **GET** `/health` simple health check
-- `cloud/verify_lambda.py` S3 trigger on `raw/` uploads; downloads uploaded JSONL(.gz), verifies signature + hash-chain, writes a result JSON & canonicalized minutes to `verified/`, updates DynamoDB status for case for next Lambda to find
-- `cloud/rules_lambda.py` S3 triggers on `verified/*/minutes.jsonl` loads verified minutes, runs WHO/IEEE rules, renders HTML report, writes to `reports/`
 - `cloud/template.yaml` very minimal AWS serverless application model (SAM)
 
 ### Updated
