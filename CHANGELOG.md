@@ -5,7 +5,8 @@ All notable changes to this project will be documented here.
 
 ## [0.9.1] - 2025-30-SEP
 ### Added
-Cloud stack (local + AWS-ready)
+**ZERO-COST LOCAL MODE - SET `LOCAL_MODE=1` ALL STORAGE/DB OPS MAP TO `./local_data/` WITH TINY SQLITE `cases.db`** \
+**Cloud stack (local + AWS-ready)**
 - `cloud/api_app.py` - fastAPI with endpoints:
   - `GET /health`
   - `POST /cases` (create case)
@@ -25,11 +26,14 @@ Cloud stack (local + AWS-ready)
 - `cloud/requirements.txt` - app deps (fastAPI, Mangum, jose, requests, uvicorn
 - `cloud/template.yaml` - AWS SAM template (function URL for API); s3 triggers; DynamoDB)
 - `cloud/__init__.py` - marks package for `-m` execution
+- Security / Auth - all API endpoints (except `/health`) require
+  - DEV mode or JWT mode
+  - Device signature verification supported via public key map (DynamoDB `devices` table or s3 JSON which is enforced by `verify_lambda.py`
 
 ### Updated
 - Makefile (merged with cloud targets. Cloud artifacts go to `build/cloud/` to not clash with `build/e2e-video/`
 - `template.yaml` SAM to function URL
-
+- `.gitignore` `local_data/`, `build/cloud/`, `.uvicorn.pid`
 ---
 
 ## [0.9.1] - 2025-29-SEP
