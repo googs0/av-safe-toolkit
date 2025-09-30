@@ -13,8 +13,8 @@ All notable changes to this project will be documented here.
   - `GET /cases/{case_id}` (status)
   - `POST /ingest/start` (pre-signed upload URL)
 - `cloud/auth.py` - pluggable authentication:
-  - **DEV mode** via static bearer token (`AUTH_MODE=dev`, `DEV_TOKEN`
-  - **JWT mode** with JWKS/OIDC validation (`AUTH_MODE=jwt`, `JWKS_URL`
+  - **DEV mode** via static bearer token (`AUTH_MODE=dev`, `DEV_TOKEN`)
+  - **JWT mode** with JWKS/OIDC validation (`AUTH_MODE=jwt`, `JWKS_URL`)
   - Optional: `JWKS_AUDIENCE`, `JWKS_ISSUER`)
 - `cloud/common.py` - shared helpers
   - when `LOCAL_MODE=1`, S3/DynamoDB emulate `./local_data/` + SQLite (`cases.db`)
