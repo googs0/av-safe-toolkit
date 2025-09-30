@@ -3,4 +3,5 @@ mangum
 pydantic
 python-jose[cryptography]
 requests
-# boto3 is included in AWS Lambda runtimes; omit here to keep the zip small
+uvicorn
+# boto3 is available in Lambda; locally it's unused when LOCAL_MODE=1
