@@ -1,98 +1,136 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: AV-SAFE serverless skeleton
+Description: AV-SAFE serverless (FastAPI + Function URL; S3 triggers for verify/rules)
 
 Parameters:
-  RawBucketName:        { Type: String, Default: avsafe-raw-demo }
-  VerifiedBucketName:   { Type: String, Default: avsafe-verified-demo }
-  ReportsBucketName:    { Type: String, Default: avsafe-reports-demo }
-  CasesTableName:       { Type: String, Default: avsafe_cases }
-  PublicKeyS3Uri:       { Type: String, Default: "" }
+  RawBucketName:      { Type: String, Default: avsafe-raw-demo }
+  VerifiedBucketName: { Type: String, Default: avsafe-verified-demo }
+  ReportsBucketName:  { Type: String, Default: avsafe-reports-demo }
+  CasesTableName:     { Type: String, Default: avsafe_cases }
+  DevicesTableName:   { Type: String, Default: avsafe_devices }
+  PublicKeyS3Uri:     { Type: String, Default: "" }
+  ProfileKey:         { Type: String, Default: avsafe_descriptors/rules/profiles/who_ieee_profile.yaml }
+  AuthMode:           { Type: String, Default: dev }                  # "dev" or "jwt"
+  DevToken:           { Type: String, Default: "" }                   # set for dev mode
+  JwksUrl:            { Type: String, Default: "" }                   # set for jwt mode
+  JwksAudience:       { Type: String, Default: "" }
+  JwksIssuer:         { Type: String, Default: "" }
 
 Globals:
   Function:
     Runtime: python3.11
     Timeout: 60
     MemorySize: 512
+    Tracing: Active
     Environment:
       Variables:
         RAW_BUCKET: !Ref RawBucketName
         VERIFIED_BUCKET: !Ref VerifiedBucketName
         REPORTS_BUCKET: !Ref ReportsBucketName
         TABLE_NAME: !Ref CasesTableName
+        DEVICES_TABLE: !Ref DevicesTableName
         PUBLIC_KEY_S3_URI: !Ref PublicKeyS3Uri
+        PROFILE_KEY: !Ref ProfileKey
+        AUTH_MODE: !Ref AuthMode
+        DEV_TOKEN: !Ref DevToken
+        JWKS_URL: !Ref JwksUrl
+        JWKS_AUDIENCE: !Ref JwksAudience
+        JWKS_ISSUER: !Ref JwksIssuer
     Policies:
-      - AmazonS3FullAccess
-      - AmazonDynamoDBFullAccess
       - AWSLambdaBasicExecutionRole
 
 Resources:
+  # Buckets (versioning on; add KMS in production)
   RawBucket:
     Type: AWS::S3::Bucket
-    Properties: { BucketName: !Ref RawBucketName, VersioningConfiguration: { Status: Enabled } }
-
+    Properties:
+      BucketName: !Ref RawBucketName
+      VersioningConfiguration: { Status: Enabled }
   VerifiedBucket:
     Type: AWS::S3::Bucket
-    Properties: { BucketName: !Ref VerifiedBucketName, VersioningConfiguration: { Status: Enabled } }
-
+    Properties:
+      BucketName: !Ref VerifiedBucketName
+      VersioningConfiguration: { Status: Enabled }
   ReportsBucket:
     Type: AWS::S3::Bucket
-    Properties: { BucketName: !Ref ReportsBucketName, VersioningConfiguration: { Status: Enabled } }
+    Properties:
+      BucketName: !Ref ReportsBucketName
+      VersioningConfiguration: { Status: Enabled }
 
+  # Tables
   CasesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref CasesTableName
       BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: case_id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: case_id
-          KeyType: HASH
+      AttributeDefinitions: [{ AttributeName: case_id, AttributeType: S }]
+      KeySchema: [{ AttributeName: case_id, KeyType: HASH }]
 
+  DevicesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref DevicesTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{ AttributeName: device_id, AttributeType: S }]
+      KeySchema: [{ AttributeName: device_id, KeyType: HASH }]
+
+  # API Lambda (FastAPI + Mangum) with Function URL (no API Gateway)
   ApiFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: api_app.handler
       CodeUri: ./
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: ANY
+      Policies:
+        - S3CrudPolicy:       { BucketName: !Ref RawBucketName }
+        - DynamoDBCrudPolicy: { TableName: !Ref CasesTableName }
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowOrigins: ['*']
+          AllowHeaders: ['*']
+          AllowMethods: ['GET','POST']
+          MaxAge: 600
 
+  # Verify Lambda (triggered by raw uploads)
   VerifyFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: verify_lambda.handler
       CodeUri: ./
       Events:
-        S3PutRaw:
+        RawPut:
           Type: S3
           Properties:
             Bucket: !Ref RawBucket
             Events: s3:ObjectCreated:Put
             Filter:
-              S3Key:
-                Rules:
-                  - Name: prefix
-                    Value: raw/
+              S3Key: { Rules: [{ Name: prefix, Value: raw/ }] }
+      Policies:
+        - S3CrudPolicy:       { BucketName: !Ref RawBucketName }
+        - S3CrudPolicy:       { BucketName: !Ref VerifiedBucketName }
+        - DynamoDBCrudPolicy: { TableName: !Ref CasesTableName }
+        - DynamoDBReadPolicy: { TableName: !Ref DevicesTableName }
 
+  # Rules Lambda (triggered by verified minutes)
   RulesFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: rules_lambda.handler
       CodeUri: ./
       Events:
-        S3PutVerifiedMinutes:
+        VerifiedMinutes:
           Type: S3
           Properties:
             Bucket: !Ref VerifiedBucket
             Events: s3:ObjectCreated:Put
             Filter:
-              S3Key:
-                Rules:
-                  - Name: suffix
-                    Value: /minutes.jsonl
+              S3Key: { Rules: [{ Name: suffix, Value: /minutes.jsonl }] }
+      Policies:
+        - S3CrudPolicy:       { BucketName: !Ref VerifiedBucketName }
+        - S3CrudPolicy:       { BucketName: !Ref ReportsBucketName }
+        - DynamoDBCrudPolicy: { TableName: !Ref CasesTableName }
+
+Outputs:
+  FunctionUrl:
+    Description: "Direct Function URL for FastAPI (use Authorization: Bearer <DEV_TOKEN> in dev mode)"
+    Value: !GetAtt ApiFunctionUrl.FunctionUrl
