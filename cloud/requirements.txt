@@ -1,6 +1,6 @@
 fastapi
 mangum
-boto3
 pydantic
-uvicorn    # local debug only
-# Use your project’s own modules from the layer or vendored path
+python-jose[cryptography]
+requests
+# boto3 is included in AWS Lambda runtimes; omit here to keep the zip small
