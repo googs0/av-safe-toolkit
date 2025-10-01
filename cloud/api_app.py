@@ -22,7 +22,6 @@ async def _rl_mw(request: Request, call_next):
     limiter(request)
     return await call_next(request)
 
-
 class CaseCreate(BaseModel):
     label: str
 
