@@ -13,8 +13,15 @@ from common import (
     update_case_status,
 )
 
-# No OpenAPI/docs
 app = FastAPI(openapi_url=None, docs_url=None, redoc_url=None, title="AV-SAFE API")
+
+from cloud.limiter import limiter
+from fastapi import Request
+@app.middleware("http")
+async def _rl_mw(request: Request, call_next):
+    limiter(request)
+    return await call_next(request)
+
 
 class CaseCreate(BaseModel):
     label: str
