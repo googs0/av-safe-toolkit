@@ -104,5 +104,10 @@ The corpus, rules, and privacy-preserving sensor workflow translate history and 
 
 ---
 
+## Location Data Policy
+AV-SAFE records **coarse** location only. Use a room/site code (e.g., “Bedrm-2A”) or a geohash truncated to **5–7 characters**. Do **not** record precise coordinates or addresses in minute summaries. Enforcement occurs at ingest via schema validation and the policy tool.
+
+---
+
 ## License
 Released under the **MIT License** (see [License](LICENSE)).
