@@ -9,7 +9,7 @@ jobs:
   cloud-e2e-local:
     runs-on: ubuntu-latest
     env:
-      # keep everything zero-cost and self-contained
+      # Zero-cost and self-contained
       LOCAL_MODE: "1"
       AUTH_MODE: dev
       DEV_TOKEN: devtoken
@@ -23,26 +23,27 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt || true
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           # ensure runtime libs for the API and validation are present
-          pip install fastapi mangum pydantic python-jose[cryptography] requests uvicorn jsonschema
+          pip install fastapi mangum pydantic "python-jose[cryptography]" requests uvicorn jsonschema
 
       - name: Import probe (helps catch path issues early)
         run: |
           python - <<'PY'
-import importlib
-mods = [
-  "cloud.api_app", "cloud.common", "cloud.verify_lambda", "cloud.rules_lambda", "cloud.local_runner",
-  "avsafe_descriptors.cli.sim", "avsafe_descriptors.cli.rules_run",
-]
-for m in mods:
-    importlib.import_module(m); print("[OK]", m)
-PY
+          import importlib
+          mods = [
+              "cloud.api_app", "cloud.common", "cloud.verify_lambda", "cloud.rules_lambda", "cloud.local_runner",
+              "avsafe_descriptors.cli.sim", "avsafe_descriptors.cli.rules_run",
+          ]
+          for m in mods:
+              importlib.import_module(m); print("[OK]", m)
+          PY
 
       - name: Start local API (FastAPI)
         run: |
@@ -84,18 +85,29 @@ PY
           test -s "$REPORT"
           head -n 40 "$REPORT" || true
 
-      - name: Validate produced minutes against schema (optional but nice)
+      - name: Validate produced minutes against schema (optional)
         run: |
           MIN=$(find local_data -type f -path '*/avsafe-verified/verified/*/*/minutes.jsonl' | head -n1 || true)
           echo "Minutes path: $MIN"
           test -n "$MIN"
-          # If you added the CLI validator:
-          if python -c "import avsafe_descriptors.cli.validate_minutes" 2>/dev/null; then
+          # Only run if the validator and schema both exist
+          python - <<'PY'
+          import importlib, pathlib, sys
+          ok_cli = True
+          try:
+              importlib.import_module("avsafe_descriptors.cli.validate_minutes")
+          except Exception:
+              ok_cli = False
+          ok_schema = pathlib.Path("avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json").exists()
+          print("HAS_CLI=", ok_cli, "HAS_SCHEMA=", ok_schema)
+          sys.exit(0 if ok_cli and ok_schema else 2)
+          PY
+          if [ $? -eq 0 ]; then
             python -m avsafe_descriptors.cli.validate_minutes \
               --in "$MIN" \
               --schema avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json
           else
-            echo "[WARN] validate_minutes CLI not found — skipping schema check."
+            echo "[WARN] validator or schema missing; skipping schema check."
           fi
 
       - name: Always show API logs on exit
@@ -104,12 +116,11 @@ PY
           echo "==== /tmp/api.log ===="
           tail -n +1 /tmp/api.log || true
 
-
       - name: Upload report artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: cloud-e2e-report
-      path: |
-        local_data/**/report.html
-        local_data/**/verification.json
-        local_data/**/results.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-e2e-report
+          path: |
+            local_data/**/report.html
+            local_data/**/verification.json
+            local_data/**/results.json
