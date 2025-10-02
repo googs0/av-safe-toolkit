@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented here.
 
+---
+
+## [0.9.1] - 2025-02-OCT
+### Added
 - `.github/workflows/cloud-e2e-local.yml` end-to-end “local mode” CI workflow with FastAPI, generates sample minutes, uploads, runs local pipeline (verify → rules → report)
 Locally you can mimic it with:
 ```bash
@@ -21,11 +25,6 @@ LOCAL_MODE=1 AUTH_MODE=dev DEV_TOKEN=devtoken \
 - `calibration_SOP.md` Standard Operating Procedure for field/device calibration.
 - `avsafe_descriptors/cli/validate_minutes.py` CLI that validates a minutes JSONL file against your Minute Summary JSON Schema
 - `avsafe_descriptors/cli/policy_enforce.py` Policy guardrail CLI to check Privacy/Retention/Location policies against minutes (e.g., `retention_days`, coarse `geohash` only, etc.) and optionally fix or block
-  
----
-
-## [0.9.1] - 2025-02-OCT
-### Added
 
 ---
 
