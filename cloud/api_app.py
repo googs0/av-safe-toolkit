@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from mangum import Mangum
 
-import auth
+from cloud import auth
 from cloud.common import (
     RAW_BUCKET, REPORTS_BUCKET,
     presign_put, presign_get,
