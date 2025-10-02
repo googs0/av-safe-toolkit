@@ -271,9 +271,13 @@ def get_report(
 # ---------------------------------------------------------------------------
 # Small utility to create a temp JSON file for renderer
 # ---------------------------------------------------------------------------
+# --- secure temp file helper (replaces mktemp) ---
+import os
+import tempfile
 
-def _dump_json_temp(obj: Dict[str, Any]) -> str:
-    p = tempfile.mktemp(suffix=".json")
-    with open(p, "w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
-    return p
+def _secure_temp_path(*, suffix: str) -> str:
+    """Create a unique temp file path safely and return its path."""
+    fd, path = tempfile.mkstemp(suffix=suffix)
+    os.close(fd)  # we only need the path; reopen later with desired mode/encoding
+    return path
+
