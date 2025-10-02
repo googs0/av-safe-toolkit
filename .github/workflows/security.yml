@@ -1,0 +1,19 @@
+name: Security
+on: [push, pull_request, schedule]
+jobs:
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install pip-audit
+      - run: pip-audit -r requirements.txt || true
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install bandit
+      - run: bandit -q -r avsafe_descriptors cloud -x tests
