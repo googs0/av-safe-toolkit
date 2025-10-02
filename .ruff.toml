@@ -1,20 +1,17 @@
-# Defaults
+# .ruff.toml — works with Ruff >=0.4
 target-version = "py311"
 line-length = 100
-extend-select = ["E", "F", "I", "B", "UP"]  # pycodestyle, pyflakes, import order, bugbear, pyupgrade
+
+[lint]
+# Enable: pycodestyle(E), pyflakes(F), import sort(I), bugbear(B), pyupgrade(UP), bandit(S)
+select = ["E", "F", "I", "B", "UP", "S"]
 ignore = [
-# slice spacing (Black compatibility)
-  "E203", 
-# too many leading '#' for block comment
-  "E266",
+  "E203",  # slice spacing (Black compatibility)
+  "E266",  # too many leading '#' for block comment
 ]
 
-[per-file-ignores]
- # allow re-exports
-"**/__init__.py" = ["F401"]   
- # FastAPI depends-on-default-factory patterns
-"cloud/api_app.py" = ["B008"] 
-# dev helpers; allow subprocess/requests etc.
-"tools/*" = ["B301","B403","B404","B603"] 
-# test patterns
-"tests/**.py" = ["B011","B018","B905"]       
+[lint.per-file-ignores]
+"**/__init__.py" = ["F401"]                 # allow re-exports
+"cloud/api_app.py" = ["B008"]               # FastAPI default factories pattern
+"tools/*" = ["S301","S403","S404","S603"]   # Bandit relaxations for dev helpers
+"tests/**.py" = ["S101","B011","B018","B905"]  # asserts etc. ok in tests
