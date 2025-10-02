@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented here.
 
+- `.github/workflows/cloud-e2e-local.yml` end-to-end “local mode” CI workflow with FastAPI, generates sample minutes, uploads, runs local pipeline (verify → rules → report)
+Locally you can mimic it with:
+```bash
+LOCAL_MODE=1 AUTH_MODE=dev DEV_TOKEN=devtoken \
+  uvicorn cloud.api_app:app & \
+  python -m avsafe_descriptors.cli.sim --minutes 2 --outfile minutes.jsonl && \
+  gzip -c minutes.jsonl > minutes.jsonl.gz && \
+  python tools/client_uploader.py --base http://127.0.0.1:8000 --token devtoken \
+    --label "CI Case" --device DEV-CI --file minutes.jsonl.gz && \
+  python -m cloud.local_runner --once
+```
+- `.github/workflows/lint-and-types.yml` catching correctness before it becomes problematic
+- `cloud/limiter.py` light request-rate limiter utilities for the FastAPI layer
+- `tools/calibration_cli.py` CL helper to create, sign, and store Calibration Records (matches your JSON schema) and to attach the resulting `calibration_id` to devices
+- `tools/devices_cli.py` device key management CLI (enroll/rotate/revoke device public keys; list/export to JSON)
+- `tools/client_uploader.py` tiny client that exercises server flow: create case → request presigned upload → upload minutes. Works against local API / Lambda Function URL
+- `.ruff.toml` project lint configuration (Python 3.11, line length 100, enforce `E`, `F`, `I`, ignore `F401` in `__init__.py`)
+- `calibration_SOP.md` Standard Operating Procedure for field/device calibration.
+- `avsafe_descriptors/cli/validate_minutes.py` CLI that validates a minutes JSONL file against your Minute Summary JSON Schema
+- `avsafe_descriptors/cli/policy_enforce.py` Policy guardrail CLI to check Privacy/Retention/Location policies against minutes (e.g., `retention_days`, coarse `geohash` only, etc.) and optionally fix or block
+  
+---
+
+## [0.9.1] - 2025-02-OCT
+### Added
+
 ---
 
 ## [0.9.1] - 2025-30-SEP
