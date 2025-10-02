@@ -3,7 +3,7 @@ All notable changes to this project will be documented here.
 
 ---
 
-## [0.9.1] - 2025-02-OCT
+## [0.9.2] - 2025-02-OCT
 ### Added
 - `.github/workflows/cloud-e2e-local.yml` end-to-end “local mode” CI workflow with FastAPI, generates sample minutes, uploads, runs local pipeline (verify → rules → report)
 Locally you can mimic it with:
@@ -28,7 +28,7 @@ LOCAL_MODE=1 AUTH_MODE=dev DEV_TOKEN=devtoken \
 
 ---
 
-## [0.9.1] - 2025-30-SEP
+## [0.9.2] - 2025-30-SEP
 ### Added
 **ZERO-COST LOCAL MODE - SET `LOCAL_MODE=1` ALL STORAGE/DB OPS MAP TO `./local_data/` WITH TINY SQLITE `cases.db`** \
 **Cloud stack (local + AWS-ready)**
@@ -61,7 +61,7 @@ LOCAL_MODE=1 AUTH_MODE=dev DEV_TOKEN=devtoken \
 - `.gitignore` `local_data/`, `build/cloud/`, `.uvicorn.pid`
 ---
 
-## [0.9.1] - 2025-29-SEP
+## [0.9.2] - 2025-29-SEP
 ### Added
 - Cloud folder
 - `cloud/requirements.txt`
