@@ -103,3 +103,13 @@ PY
         run: |
           echo "==== /tmp/api.log ===="
           tail -n +1 /tmp/api.log || true
+
+
+      - name: Upload report artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: cloud-e2e-report
+    path: |
+      local_data/**/report.html
+      local_data/**/verification.json
+      local_data/**/results.json
