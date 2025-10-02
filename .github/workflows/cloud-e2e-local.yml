@@ -1,0 +1,105 @@
+name: AV-SAFE cloud e2e (LOCAL_MODE)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  cloud-e2e-local:
+    runs-on: ubuntu-latest
+    env:
+      # keep everything zero-cost and self-contained
+      LOCAL_MODE: "1"
+      AUTH_MODE: dev
+      DEV_TOKEN: devtoken
+      # make your packages importable from the repo root
+      PYTHONPATH: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || true
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          # ensure runtime libs for the API and validation are present
+          pip install fastapi mangum pydantic python-jose[cryptography] requests uvicorn jsonschema
+
+      - name: Import probe (helps catch path issues early)
+        run: |
+          python - <<'PY'
+import importlib
+mods = [
+  "cloud.api_app", "cloud.common", "cloud.verify_lambda", "cloud.rules_lambda", "cloud.local_runner",
+  "avsafe_descriptors.cli.sim", "avsafe_descriptors.cli.rules_run",
+]
+for m in mods:
+    importlib.import_module(m); print("[OK]", m)
+PY
+
+      - name: Start local API (FastAPI)
+        run: |
+          nohup python -m uvicorn cloud.api_app:app --host 127.0.0.1 --port 8000 >/tmp/api.log 2>&1 &
+          # health wait-loop
+          for i in {1..30}; do
+            sleep 0.5
+            if curl -fsS http://127.0.0.1:8000/health >/dev/null; then
+              echo "API up"; break
+            fi
+          done
+          curl -fsS http://127.0.0.1:8000/health || (echo "API failed to start"; tail -n +1 /tmp/api.log; exit 1)
+
+      - name: Generate minutes & upload via client
+        run: |
+          python -m avsafe_descriptors.cli.sim --minutes 2 --outfile minutes.jsonl
+          gzip -c minutes.jsonl > minutes.jsonl.gz
+          python tools/client_uploader.py \
+            --base http://127.0.0.1:8000 \
+            --token "$DEV_TOKEN" \
+            --label "CI Case" \
+            --device DEV-CI \
+            --file minutes.jsonl.gz
+
+      - name: Process locally (verify → rules → report)
+        run: |
+          python -m cloud.local_runner --once
+
+      - name: Show local_data tree (for debugging)
+        run: |
+          echo "===== local_data ====="
+          find local_data -maxdepth 6 -print || true
+
+      - name: Assert report exists & is non-empty
+        run: |
+          REPORT=$(find local_data -type f -name 'report.html' | head -n1 || true)
+          echo "Report path: $REPORT"
+          test -n "$REPORT"
+          test -s "$REPORT"
+          head -n 40 "$REPORT" || true
+
+      - name: Validate produced minutes against schema (optional but nice)
+        run: |
+          MIN=$(find local_data -type f -path '*/avsafe-verified/verified/*/*/minutes.jsonl' | head -n1 || true)
+          echo "Minutes path: $MIN"
+          test -n "$MIN"
+          # If you added the CLI validator:
+          if python -c "import avsafe_descriptors.cli.validate_minutes" 2>/dev/null; then
+            python -m avsafe_descriptors.cli.validate_minutes \
+              --in "$MIN" \
+              --schema avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json
+          else
+            echo "[WARN] validate_minutes CLI not found — skipping schema check."
+          fi
+
+      - name: Always show API logs on exit
+        if: always()
+        run: |
+          echo "==== /tmp/api.log ===="
+          tail -n +1 /tmp/api.log || true
