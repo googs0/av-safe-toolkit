@@ -7,7 +7,7 @@ Usage:
   LOCAL_MODE=1 python -m cloud.local_runner --watch   # naive loop
 """
 import os, time, json, pathlib, argparse
-from common import (
+from cloud.common import (
     LOCAL_MODE, BASE, RAW_BUCKET, VERIFIED_BUCKET, REPORTS_BUCKET,
     get_object_bytes, put_object_bytes, read_jsonl_bytes, jsonl_bytes,
     load_pubkey_map, verify_minutes_chain_and_signatures,
