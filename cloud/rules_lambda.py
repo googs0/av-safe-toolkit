@@ -1,7 +1,7 @@
 import json
 from typing import Any, Dict
 
-from common import (
+from cloud.common import (
     get_object_bytes, read_jsonl_bytes, put_object_bytes,
     run_rules_and_report, update_case_status,
     VERIFIED_BUCKET, REPORTS_BUCKET
