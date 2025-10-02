@@ -20,4 +20,4 @@ jobs:
           echo "Running Ruff in soft mode (won't fail CI)"
           ruff --version
           # Show issues in PR UI but don't fail the job.
-          ruff check . --output-format=github || true
+          ruff check . --output-format=github
