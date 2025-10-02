@@ -17,6 +17,11 @@ LOCAL_MODE=1 AUTH_MODE=dev DEV_TOKEN=devtoken \
 - `tools/calibration_cli.py` CL helper to create, sign, and store Calibration Records (matches your JSON schema) and to attach the resulting `calibration_id` to devices
 - `tools/devices_cli.py` device key management CLI (enroll/rotate/revoke device public keys; list/export to JSON)
 - `tools/client_uploader.py` tiny client that exercises server flow: create case → request presigned upload → upload minutes. Works against local API / Lambda Function URL
+how to use:
+```bash
+python tools/client_uploader.py --base http://127.0.0.1:8000 \
+  --token devtoken --label "Test Case" --device DEV-001 --file minutes.jsonl.gz
+```
 - `.ruff.toml` project lint configuration (Python 3.11, line length 100, enforce `E`, `F`, `I`, ignore `F401` in `__init__.py`)
 - `calibration_SOP.md` Standard Operating Procedure for field/device calibration.
 - `avsafe_descriptors/cli/validate_minutes.py` CLI that validates a minutes JSONL file against your Minute Summary JSON Schema
