@@ -1,0 +1,11 @@
+# Ruff config
+target-version = "py311"
+line-length = 100
+
+[lint]
+# Style + import issues
+select = ["E", "F", "I"]
+
+[lint.per-file-ignores]
+# allow re-exports in package __init__.py
+"**/__init__.py" = ["F401"]  
