@@ -1,0 +1,13 @@
+name: Lint & Types
+on: [push, pull_request]
+jobs:
+  lint-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: |
+          pip install ruff mypy
+          ruff check .
+          mypy --ignore-missing-imports avsafe_descriptors cloud tools
