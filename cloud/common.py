@@ -168,34 +168,9 @@ def verify_minutes_chain_and_signatures(minutes: List[Dict[str, Any]],
     return {"ok":True,"last_hash":prev_hash,"count":len(minutes),"device_id":device_id}
 
 # Rules + HTML
-def run_rules_and_report(
-    minutes: List[Dict[str, Any]],
-    profile_key: Optional[str] = None,
-) -> (Dict[str, Any], bytes):
-    import tempfile, json, os
-
+def run_rules_and_report(minutes: List[Dict[str, Any]], profile_key: Optional[str] = None) -> (Dict[str, Any], bytes):
     profile = load_profile(profile_key or PROFILE_KEY)
+    results = evaluate_minutes(minutes, profile)
+    html = render_report_html(minutes, results, profile)
+    return results, (html if isinstance(html,(bytes,bytearray)) else html.encode("utf-8"))
 
-    # Write minutes to a temp JSONL (file-based evaluator)
-    fd_m, p_m = tempfile.mkstemp(suffix=".jsonl")
-    os.close(fd_m)
-    with open(p_m, "w", encoding="utf-8") as fm:
-        for m in minutes:
-            fm.write(json.dumps(m, ensure_ascii=False) + "\n")
-
-    # Evaluate using file path API
-    results = evaluate(p_m, profile)
-
-    # Write results JSON for renderer
-    fd_r, p_r = tempfile.mkstemp(suffix=".json")
-    os.close(fd_r)
-    with open(p_r, "w", encoding="utf-8") as fr:
-        json.dump(results, fr, ensure_ascii=False, indent=2)
-
-    # Render HTML to a temp file, then return bytes
-    fd_h, p_h = tempfile.mkstemp(suffix=".html")
-    os.close(fd_h)
-    render(p_m, results_path=p_r, out_html=p_h, footnote=None)
-
-    html_bytes = open(p_h, "rb").read()
-    return results, html_bytes
