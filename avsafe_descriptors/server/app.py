@@ -271,9 +271,6 @@ def get_report(
 # ---------------------------------------------------------------------------
 # Small utility to create a temp JSON file for renderer
 # ---------------------------------------------------------------------------
-# --- secure temp file helper (replaces mktemp) ---
-import os
-import tempfile
 
 def _secure_temp_path(*, suffix: str) -> str:
     """Create a unique temp file path safely and return its path."""
