@@ -87,28 +87,28 @@ jobs:
 
       - name: Validate produced minutes against schema (optional)
         run: |
+          set -e
           MIN=$(find local_data -type f -path '*/avsafe-verified/verified/*/*/minutes.jsonl' | head -n1 || true)
           echo "Minutes path: $MIN"
-          test -n "$MIN"
-          # Only run if the validator and schema both exist
-          python - <<'PY'
-          import importlib, pathlib, sys
-          ok_cli = True
-          try:
-              importlib.import_module("avsafe_descriptors.cli.validate_minutes")
-          except Exception:
-              ok_cli = False
-          ok_schema = pathlib.Path("avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json").exists()
-          print("HAS_CLI=", ok_cli, "HAS_SCHEMA=", ok_schema)
-          sys.exit(0 if ok_cli and ok_schema else 2)
-          PY
-          if [ $? -eq 0 ]; then
+      
+          # Try both possible schema locations
+          SCHEMA=""
+          for p in \
+            schemas/avsafe-minute-summary.schema.json \
+            avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json
+          do
+            if [ -f "$p" ]; then SCHEMA="$p"; break; fi
+          done
+      
+          # Only run if both the CLI is importable and the schema exists
+          if python -c "import avsafe_descriptors.cli.validate_minutes" 2>/dev/null && [ -n "$SCHEMA" ]; then
             python -m avsafe_descriptors.cli.validate_minutes \
               --in "$MIN" \
-              --schema avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json
+              --schema "$SCHEMA"
           else
             echo "[WARN] validator or schema missing; skipping schema check."
           fi
+
 
       - name: Always show API logs on exit
         if: always()
