@@ -273,7 +273,7 @@ def get_report(
 # ---------------------------------------------------------------------------
 
 def _dump_json_temp(obj: Dict[str, Any]) -> str:
-    path = tempfile.mktemp(suffix=".json")
-    with open(path, "w", encoding="utf-8") as f:
+    p = tempfile.mktemp(suffix=".json")
+    with open(p, "w", encoding="utf-8") as f:
         json.dump(obj, f, ensure_ascii=False, indent=2)
-    return path
+    return p
