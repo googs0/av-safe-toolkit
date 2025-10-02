@@ -9,11 +9,11 @@ jobs:
   cloud-e2e-local:
     runs-on: ubuntu-latest
     env:
-      # keep everything zero-cost and self-contained
+      # Zero-cost and self-contained
       LOCAL_MODE: "1"
       AUTH_MODE: dev
       DEV_TOKEN: devtoken
-      # make your packages importable from the repo root
+      # make packages importable from the repo root
       PYTHONPATH: ${{ github.workspace }}
 
     steps:
@@ -35,14 +35,14 @@ jobs:
       - name: Import probe (helps catch path issues early)
         run: |
           python - <<'PY'
-import importlib
-mods = [
-  "cloud.api_app", "cloud.common", "cloud.verify_lambda", "cloud.rules_lambda", "cloud.local_runner",
-  "avsafe_descriptors.cli.sim", "avsafe_descriptors.cli.rules_run",
-]
-for m in mods:
-    importlib.import_module(m); print("[OK]", m)
-PY
+          import importlib
+          mods =  [
+          "cloud.api_app", "cloud.common", "cloud.verify_lambda", "cloud.rules_lambda", "cloud.local_runner",
+          "avsafe_descriptors.cli.sim", "avsafe_descriptors.cli.rules_run",
+          ]
+          for m in mods:
+            importlib.import_module(m); print("[OK]", m)
+            PY
 
       - name: Start local API (FastAPI)
         run: |
