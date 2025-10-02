@@ -1,23 +1,9 @@
 #!/usr/bin/env python3
 """
-AV-SAFE: Rules evaluation CLI
+AV-SAFE: Run rules on minute summaries.
 
-Runs the rules engine on a minutes file using a WHO/IEEE (and locale-aware) profile,
-and writes a JSON results artifact (or prints to stdout).
-
-Examples
---------
-  avsafe-rules --minutes data/minutes.jsonl --profile rules/profiles/who_ieee.json --out out/results.json
-  avsafe-rules --minutes m.jsonl --profile profiles/de.json --stdout --pretty
-  avsafe-rules --minutes m.jsonl --profile profiles/us.json --out out/results.json --overwrite --print-summary
-
-Notes
------
-This CLI calls:
-  - load_profile(profile_path) from rules.profile_loader
-  - evaluate(minutes_path, profile, locale=None) from rules.evaluator
-
-Both functions are expected to be pure and file-path based, keeping this CLI dependency-light.
+Reads minutes.jsonl, loads a WHO/IEEE profile, evaluates rules,
+and writes per-minute flags to a JSONL file (default).
 """
 
 from __future__ import annotations
@@ -25,199 +11,140 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import traceback
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
-EXIT_OK = 0
-EXIT_BAD_ARGS = 2
-EXIT_RUNTIME = 1
-
-try:
-    from ..rules.profile_loader import load_profile  # type: ignore
-    from ..rules.evaluator import evaluate  # type: ignore
-except Exception as e:  # pragma: no cover
-    print("FATAL: cannot import rules modules ('..rules.profile_loader', '..rules.evaluator').", file=sys.stderr)
-    raise
+from avsafe_descriptors.rules.evaluator import evaluate_minutes
+from avsafe_descriptors.rules.profile_loader import load_profile
 
 
-def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
+def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
+    out: List[Dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                out.append(json.loads(line))
+    return out
+
+
+def _write_jsonl(path: Path, records: Iterable[Dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        for r in records:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+
+def _write_json(path: Path, data: Any, indent: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        if indent and indent > 0:
+            json.dump(data, f, ensure_ascii=False, indent=indent)
+        else:
+            json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+
+
+def _flatten_results_to_flags(
+    results: Any,
+) -> List[Dict[str, Any]]:
+    """
+    Normalize evaluator output into a per-minute list suitable for JSONL, e.g.:
+
+    [{"idx": 0, "flags": [...]}, {"idx": 1, "flags": [...]}]
+    """
+    # Preferred shape: {"per_minute": [...], "summary": {...}, ...}
+    if isinstance(results, dict) and "per_minute" in results:
+        per_min = results["per_minute"]
+        if isinstance(per_min, list):
+            return per_min
+
+    # If we get a list already, trust it's per-minute records
+    if isinstance(results, list):
+        return results
+
+    # If we get a dict mapping idx -> flags, convert it
+    if isinstance(results, dict):
+        converted: List[Dict[str, Any]] = []
+        for k, v in results.items():
+            try:
+                idx = int(k)
+            except Exception:
+                # Not an idx → flags mapping; give up gracefully
+                break
+            rec = {"idx": idx, "flags": v}
+            converted.append(rec)
+        if converted:
+            converted.sort(key=lambda r: r["idx"])
+            return converted
+
+    # Fallback: return an empty list (better than raising)
+    return []
+
+
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        prog="avsafe-rules",
-        description="Evaluate AV-SAFE rules on minute summaries with a selected profile.",
-        formatter_class=argparse.RawTextHelpFormatter,
-        epilog=(
-            "Examples:\n"
-            "  avsafe-rules --minutes data/minutes.jsonl --profile rules/profiles/who_ieee.json --out out/results.json\n"
-            "  avsafe-rules --minutes m.jsonl --profile profiles/de.json --stdout --pretty\n"
-            "  avsafe-rules --minutes m.jsonl --profile profiles/us.json --out out/results.json --overwrite --print-summary\n"
-        ),
+        prog="avsafe-rules-run",
+        description="Evaluate WHO/IEEE rules on AV-SAFE minute summaries.",
     )
     p.add_argument(
-        "--minutes",
+        "--in",
+        dest="in_path",
         required=True,
-        help="Path to minute summaries (e.g., JSONL with per-minute descriptors).",
+        help="Path to minutes.jsonl",
     )
     p.add_argument(
         "--profile",
-        required=True,
-        help="Path to a rules profile JSON (WHO/IEEE thresholds, rubric, locale defaults).",
+        default="avsafe_descriptors/rules/profiles/who_ieee_profile.yaml",
+        help="Path to profile YAML (default: WHO/IEEE profile).",
     )
     p.add_argument(
-        "--locale",
-        default=None,
-        help="Locale code (e.g., 'de-DE', 'en-GB'). If omitted, evaluator/profile defaults are used.",
-    )
-    out_group = p.add_mutually_exclusive_group()
-    out_group.add_argument(
         "--out",
-        default="results.json",
-        help="Output JSON path (default: results.json). Ignored if --stdout is set.",
-    )
-    out_group.add_argument(
-        "--stdout",
-        action="store_true",
-        help="Write JSON to stdout instead of a file.",
+        dest="out_path",
+        required=True,
+        help="Output path. Default format is JSONL (one record per line).",
     )
     p.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Allow overwriting an existing output file.",
-    )
-    fmt = p.add_mutually_exclusive_group()
-    #fmt.add_argument(
-        #"--pretty",
-       # action="true",
-       # help=argparse.SUPPRESS,  # keep CLI clean; use --indent instead (preferred)
+        "--format",
+        choices=["jsonl", "json"],
+        default="jsonl",
+        help="Output format (default: jsonl).",
     )
     p.add_argument(
         "--indent",
         type=int,
         default=2,
-        help="Pretty-print JSON with this indent (set 0 for compact). Default: 2.",
-    )
-    p.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Load inputs and evaluate, but do not write the output artifact.",
-    )
-    p.add_argument(
-        "--print-summary",
-        action="store_true",
-        help="After evaluation, print a brief summary to stderr (keys, lengths).",
-    )
-    p.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Verbose errors (print full tracebacks).",
+        help="Pretty-print JSON when --format=json (0 for compact). Default: 2.",
     )
     return p.parse_args(argv)
 
 
-def ensure_file(path: Path, what: str) -> None:
-    if not path.exists():
-        raise FileNotFoundError(f"{what} not found: {path}")
-    if not path.is_file():
-        raise IsADirectoryError(f"{what} is not a file: {path}")
-
-
-def _json_summary(obj: Any) -> str:
-    """Tiny, defensive summary for heterogeneous results."""
-    try:
-        if isinstance(obj, dict):
-            keys = list(obj.keys())
-            preview = ", ".join(keys[:5]) + ("…" if len(keys) > 5 else "")
-            return f"dict(keys={len(keys)}: {preview})"
-        if isinstance(obj, list):
-            return f"list(len={len(obj)})"
-        return f"{type(obj).__name__}"
-    except Exception:
-        return "unknown"
-
-
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
 
-    minutes_path = Path(args.minutes).expanduser().resolve()
-    profile_path = Path(args.profile).expanduser().resolve()
+    in_path = Path(args.in_path)
+    if not in_path.exists():
+        print(f"ERROR: input not found: {in_path}", file=sys.stderr)
+        return 2
 
-    # Checks
-    try:
-        ensure_file(minutes_path, "Minutes")
-        ensure_file(profile_path, "Profile")
-    except Exception as e:
-        if args.verbose:
-            traceback.print_exc()
-        print(f"ERROR: {e}", file=sys.stderr)
-        return EXIT_BAD_ARGS
-
-    # Load profile
-    try:
-        profile = load_profile(str(profile_path))
-    except Exception as e:
-        if args.verbose:
-            traceback.print_exc()
-        print(f"ERROR: failed to load profile {profile_path}: {e}", file=sys.stderr)
-        return EXIT_RUNTIME
+    # Load inputs
+    minutes = _read_jsonl(in_path)
+    profile = load_profile(args.profile)
 
     # Evaluate
-    try:
-        results = evaluate(str(minutes_path), profile, locale=args.locale)
-    except Exception as e:
-        if args.verbose:
-            traceback.print_exc()
-        print(f"ERROR: evaluation failed: {e}", file=sys.stderr)
-        return EXIT_RUNTIME
+    results = evaluate_minutes(minutes, profile)
+    flags = _flatten_results_to_flags(results)
 
-    if args.print_summary:
-        print(f"[summary] results = {_json_summary(results)}", file=sys.stderr)
+    # Write
+    out_path = Path(args.out_path)
+    if args.format == "jsonl":
+        _write_jsonl(out_path, flags)
+    else:
+        payload: Dict[str, Any] = {"per_minute": flags, "profile_name": profile.get("name")}
+        _write_json(out_path, payload, indent=args.indent)
 
-    # No write mode
-    if args.dry_run or args.stdout:
-        try:
-            indent = None if args.indent == 0 else args.indent
-            json.dump(results, sys.stdout, ensure_ascii=False, indent=indent)
-            if indent is not None:
-                sys.stdout.write("\n")
-            sys.stdout.flush()
-        except Exception as e:
-            if args.verbose:
-                traceback.print_exc()
-            print(f"ERROR: failed to write JSON to stdout: {e}", file=sys.stderr)
-            return EXIT_RUNTIME
-        return EXIT_OK
-
-    # File write
-    out_path = Path(args.out).expanduser()
-    try:
-        # Keep relative paths relative to CWD; ensure parent exists
-        parent = (Path.cwd() / out_path).parent if not out_path.is_absolute() else out_path.parent
-        parent.mkdir(parents=True, exist_ok=True)
-    except Exception as e:
-        if args.verbose:
-            traceback.print_exc()
-        print(f"ERROR: cannot create output directory for {out_path}: {e}", file=sys.stderr)
-        return EXIT_RUNTIME
-
-    if out_path.exists() and not args.overwrite:
-        print(f"ERROR: output exists: {out_path}. Use --overwrite to replace.", file=sys.stderr)
-        return EXIT_BAD_ARGS
-
-    try:
-        indent = None if args.indent == 0 else args.indent
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, ensure_ascii=False, indent=indent)
-            if indent is not None:
-                f.write("\n")
-    except Exception as e:
-        if args.verbose:
-            traceback.print_exc()
-        print(f"ERROR: failed to write {out_path}: {e}", file=sys.stderr)
-        return EXIT_RUNTIME
-
-    print(f"Wrote results to {out_path}")
-    return EXIT_OK
+    # Quiet success
+    return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     raise SystemExit(main())
