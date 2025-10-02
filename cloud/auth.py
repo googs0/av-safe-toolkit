@@ -10,10 +10,8 @@ from typing import Optional, Dict, Any
 from jose import jwt
 import requests
 
-# "dev" | "jwt"
-AUTH_MODE = os.environ.get("AUTH_MODE", "dev").lower()
-# used in dev mode (if blank, allow anonymous)
-DEV_TOKEN = os.environ.get("DEV_TOKEN", "")              
+AUTH_MODE = os.environ.get("AUTH_MODE", "dev").lower()   # "dev" | "jwt"
+DEV_TOKEN = os.environ.get("DEV_TOKEN", "")              # used in dev mode (if blank, allow anonymous)
 
 JWKS_URL      = os.environ.get("JWKS_URL", "")
 JWKS_AUDIENCE = os.environ.get("JWKS_AUDIENCE", "")
