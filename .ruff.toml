@@ -1,0 +1,20 @@
+# Defaults
+target-version = "py311"
+line-length = 100
+extend-select = ["E", "F", "I", "B", "UP"]  # pycodestyle, pyflakes, import order, bugbear, pyupgrade
+ignore = [
+# slice spacing (Black compatibility)
+  "E203", 
+# too many leading '#' for block comment
+  "E266",
+]
+
+[per-file-ignores]
+ # allow re-exports
+"**/__init__.py" = ["F401"]   
+ # FastAPI depends-on-default-factory patterns
+"cloud/api_app.py" = ["B008"] 
+# dev helpers; allow subprocess/requests etc.
+"tools/*" = ["B301","B403","B404","B603"] 
+# test patterns
+"tests/**.py" = ["B011","B018","B905"]       
