@@ -5,9 +5,17 @@ on:
     branches: [ main ]
   pull_request:
 
+concurrency:
+  group: avsafe-cloud-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   cloud-e2e-local:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       # Zero-cost and self-contained
       LOCAL_MODE: "1"
@@ -24,40 +32,66 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
 
       - name: Install dependencies
+        shell: bash
         run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
           pip install -r requirements.txt || true
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           # ensure runtime libs for the API and validation are present
-          pip install fastapi mangum pydantic python-jose[cryptography] requests uvicorn jsonschema
+          pip install "fastapi" "mangum" "pydantic" "python-jose[cryptography]" "requests" "uvicorn" "jsonschema"
 
       - name: Import probe (helps catch path issues early)
+        shell: bash
         run: |
+          set -euo pipefail
           python - <<'PY'
-          import importlib
-          mods =  [
-          "cloud.api_app", "cloud.common", "cloud.verify_lambda", "cloud.rules_lambda", "cloud.local_runner",
-          "avsafe_descriptors.cli.sim", "avsafe_descriptors.cli.rules_run",
-          ]
-          for m in mods:
-            importlib.import_module(m); print("[OK]", m)
-            PY
+import importlib
+
+mods = [
+    "cloud.api_app",
+    "cloud.common",
+    "cloud.verify_lambda",
+    "cloud.rules_lambda",
+    "cloud.local_runner",
+    "avsafe_descriptors.cli.sim",
+    "avsafe_descriptors.cli.rules_run",
+]
+for m in mods:
+    importlib.import_module(m)
+    print("[OK]", m)
+PY
 
       - name: Start local API (FastAPI)
+        shell: bash
         run: |
+          set -euo pipefail
+
+          # start in background
           nohup python -m uvicorn cloud.api_app:app --host 127.0.0.1 --port 8000 >/tmp/api.log 2>&1 &
+
           # health wait-loop
           for i in {1..30}; do
             sleep 0.5
             if curl -fsS http://127.0.0.1:8000/health >/dev/null; then
-              echo "API up"; break
+              echo "API up"
+              break
             fi
           done
-          curl -fsS http://127.0.0.1:8000/health || (echo "API failed to start"; tail -n +1 /tmp/api.log; exit 1)
+
+          # final check or dump logs
+          curl -fsS http://127.0.0.1:8000/health || { echo "API failed to start"; cat /tmp/api.log || true; exit 1; }
 
       - name: Generate minutes & upload via client
+        shell: bash
         run: |
+          set -euo pipefail
           python -m avsafe_descriptors.cli.sim --minutes 2 --outfile minutes.jsonl
           gzip -c minutes.jsonl > minutes.jsonl.gz
           python tools/client_uploader.py \
@@ -68,38 +102,67 @@ jobs:
             --file minutes.jsonl.gz
 
       - name: Process locally (verify → rules → report)
+        shell: bash
         run: |
+          set -euo pipefail
           python -m cloud.local_runner --once
 
       - name: Show local_data tree (for debugging)
+        shell: bash
         run: |
+          set -euo pipefail
           echo "===== local_data ====="
           find local_data -maxdepth 6 -print || true
 
       - name: Assert report exists & is non-empty
+        shell: bash
         run: |
-          REPORT=$(find local_data -type f -name 'report.html' | head -n1 || true)
+          set -euo pipefail
+          REPORT="$(find local_data -type f -name 'report.html' | head -n1 || true)"
           echo "Report path: $REPORT"
           test -n "$REPORT"
           test -s "$REPORT"
           head -n 40 "$REPORT" || true
 
-      - name: Validate produced minutes against schema (optional but nice)
+      - name: Validate produced minutes against schema (optional)
+        shell: bash
         run: |
-          MIN=$(find local_data -type f -path '*/avsafe-verified/verified/*/*/minutes.jsonl' | head -n1 || true)
+          set -euo pipefail
+          MIN="$(find local_data -type f -path '*/avsafe-verified/verified/*/*/minutes.jsonl' | head -n1 || true)"
           echo "Minutes path: $MIN"
           test -n "$MIN"
+
           # If you added the CLI validator:
-          if python -c "import avsafe_descriptors.cli.validate_minutes" 2>/dev/null; then
-            python -m avsafe_descriptors.cli.validate_minutes \
-              --in "$MIN" \
-              --schema avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json
-          else
-            echo "[WARN] validate_minutes CLI not found — skipping schema check."
-          fi
+          python - <<'PY'
+import importlib, sys, subprocess, os
+try:
+    importlib.import_module("avsafe_descriptors.cli.validate_minutes")
+except Exception:
+    print("[WARN] validate_minutes CLI not found — skipping schema check.")
+    sys.exit(0)
+
+subprocess.check_call([
+    sys.executable, "-m", "avsafe_descriptors.cli.validate_minutes",
+    "--in", os.environ["MIN"],
+    "--schema", "avsafe_descriptors/hf_avc/schemas/avsafe-minute-summary.schema.json",
+])
+PY
+
+        env:
+          MIN: ${{ env.MIN }}
+
+      - name: Upload report artifact (for convenience)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: avsafe-report
+          path: |
+            local_data/**/report.html
+          if-no-files-found: warn
 
       - name: Always show API logs on exit
         if: always()
+        shell: bash
         run: |
           echo "==== /tmp/api.log ===="
-          tail -n +1 /tmp/api.log || true
+          (tail -n +1 /tmp/api.log || true)
