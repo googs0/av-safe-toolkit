@@ -1,60 +1,11 @@
-# Ruff configuration
+# Ruff config
 target-version = "py311"
-line-length = 120
-
-extend-exclude = [
-  "build",
-  "dist",
-  "local_data",
-  ".venv",
-  "venv",
-  "node_modules",
-  "reports",
-  "tmp",
-  "docs/_site",
-  "site",
-  "tests/assets",
-]
+line-length = 100
 
 [lint]
-# Core correctness + style + imports + helpful upgrades:
-# E/F: pycodestyle/pyflakes
-# I:   import sorting (isort)
-# B:   flake8-bugbear (common pitfalls)
-# UP:  pyupgrade (modernize syntax for 3.11)
-select = ["E", "F", "I", "B", "UP"]
-
-# Ignore noise:
-# E203 (whitespace before ':' — Black/formatter-compatible)
-# E266 (too many leading '#' for block comments)
-ignore = ["E203", "E266"]
-
-# Allow Ruff to auto-fix anything it safely can (when you run with --fix)
-fixable = ["ALL"]
-unfixable = []
-
-[lint.isort]
-# Make import sorting deterministic and consistent
-combine-as-imports = true
-force-sort-within-sections = true
-known-first-party = ["avsafe_descriptors", "cloud"]
-section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
-
-[format]
-# Use Ruff's formatter; keep your existing quoting style
-quote-style = "preserve"
-indent-style = "space"
-line-ending = "lf"
-docstring-code-format = true
-docstring-code-line-length = 120
+# Style + import issues
+select = ["E", "F", "I"]
 
 [lint.per-file-ignores]
-# Allow re-exports and star imports in package __init__.py
-"**/__init__.py" = ["F401", "F403"]
-
-# HTML templates and large inline strings: allow long lines only here
-"avsafe_descriptors/report/render_html.py" = ["E501"]
-
-# Tests and small utility scripts often have long messages/strings
-"tests/**" = ["E501"]
-"tools/**" = ["E501"]
+# allow re-exports in package __init__.py
+"**/__init__.py" = ["F401"]  
