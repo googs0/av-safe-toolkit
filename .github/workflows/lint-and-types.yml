@@ -1,0 +1,27 @@
+name: Lint & Types
+on: [push, pull_request]
+
+jobs:
+  lint-types:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install tools
+        run: |
+          pip install ruff mypy
+          # Optional stub helpers to quiet some libs
+          pip install types-requests types-PyYAML
+          # project deps so mypy can import your modules
+          pip install -r requirements.txt || true
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+      - name: Ruff
+        run: |
+          ruff check . --output-format=github
+      - name: Mypy
+        run: |
+          mypy avsafe_descriptors cloud tools --config-file mypy.ini
