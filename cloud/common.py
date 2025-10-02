@@ -8,8 +8,8 @@ BASE = pathlib.Path(os.environ.get("LOCAL_DATA_DIR", "./local_data")).resolve()
 from avsafe_descriptors.integrity.hash_chain import chain_hash, canonical_json
 from avsafe_descriptors.integrity.signing import verify_bytes
 from avsafe_descriptors.rules.profile_loader import load_profile
-from avsafe_descriptors.rules.evaluator import evaluate
-from avsafe_descriptors.report.render_html import render
+from avsafe_descriptors.rules.evaluator import evaluate_minutes
+from avsafe_descriptors.report.render_html import render_html
 
 # Env config
 RAW_BUCKET      = os.environ.get("RAW_BUCKET", "avsafe-raw")
