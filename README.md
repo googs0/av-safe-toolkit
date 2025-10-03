@@ -47,7 +47,7 @@ uvicorn avsafe_descriptors.server.app:app --reload --port 8000
 ---
 
 ## Backend pipeline
-Full serverless stack that lets you run locally or deploy later on AWS \
+Full serverless stack that lets you run locally or deploy later on AWS
 - Fast API
 - Authentication via `dev` (static bearer token) or `jwt`
 - Pipeline steps:
