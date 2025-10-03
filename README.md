@@ -46,6 +46,19 @@ uvicorn avsafe_descriptors.server.app:app --reload --port 8000
 
 ---
 
+## Backend pipeline
+Full serverless stack that lets you run locally or deploy later on AWS \
+- Fast API
+- Authentication via `dev` (static bearer token) or `jwt`
+- Pipeline steps:
+  - `verify_lambda.py` on upload, **verify hash-chain and signatures**, copy to `verified/`, update case status
+  - `rules_lambda.py` on verified minutes, **run WHO/IEEE rules** and **render HTML**
+- Local runner (`local_runner.py`) runs same **verify** --> **rules** --> **report** flow offline
+ 
+**devices** compute + sign minutes; **the backend** verifies --> evaluates --> produces a report
+
+---
+
 ## HF-AVC corpus (taxonomy & threat model)
 Define and ingest historical-forensic cases into a local SQLite corpus. JSON files validate against a JSON Schema and can be published with a JSON-LD context for interop.
 ```bash
