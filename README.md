@@ -53,7 +53,7 @@ Full serverless stack that lets you run locally or deploy later on AWS
 - Pipeline steps:
   - `verify_lambda.py` on upload, **verify hash-chain and signatures**, copy to `verified/`, update case status
   - `rules_lambda.py` on verified minutes, **run WHO/IEEE rules** and **render HTML**
-- Local runner (`local_runner.py`) runs same **verify** --> **rules** --> **report** flow offline
+- Local runner (`local_runner.py`) runs same **verify** -> **rules** --> **report** flow offline
  
 **devices** compute + sign minutes; **the backend** verifies --> evaluates --> produces a report
 
